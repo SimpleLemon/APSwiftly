@@ -1,5 +1,16 @@
 const { AoiClient } = require("aoi.js"); // Define aoi.js client
-const config = require("./config.json"); // Load the setup options from config
+let config = {};
+try {
+  config = require("./config.json"); // Load the setup options from config
+} catch {
+  config = {
+    MobileStatus: false,
+    EnableDebugMode: false,
+    DisableAllErrors: false,
+    respondOnEdit: false,
+    LogCommands: false,
+  };
+}
 require('dotenv').config() // Enable env support in local hosting
 
 const functions = require("./handlers/functions.js");

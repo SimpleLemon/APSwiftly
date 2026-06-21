@@ -380,6 +380,7 @@ Nest (`nest.service`) and APSwiftly are isolated: separate directories, separate
 - Version: `2.2.2-build.2196` (codename "Electric") per `package.json` / `handlers/variables.js`.
 - No automated test suite (`npm test` is a placeholder).
 - Production uses systemd (`apswiftly.service`); local dev uses `npm start` / `node index.js`.
+- `config.json` is optional when all settings come from `.env` (production); defaults apply if missing.
 - Database path is env-driven: `AOI_DB_PATH` (default `./database/`). See `APSWIFTLY_DB_CONTEXT.md` for full DB layout and backup notes.
 - After adding or changing slash commands, run `refreshslash` (owner) or restart with user-apps ready handler to register globals.
 
