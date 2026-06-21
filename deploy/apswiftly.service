@@ -1,0 +1,16 @@
+[Unit]
+Description=APSwiftly Discord bot (aoi.js)
+After=network.target
+
+[Service]
+Type=simple
+User=deployer
+Group=deployer
+WorkingDirectory=/var/www/apswiftly
+EnvironmentFile=/var/www/apswiftly/.env
+ExecStart=/usr/bin/node index.js
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

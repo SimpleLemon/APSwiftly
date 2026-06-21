@@ -17,6 +17,7 @@ const client = new AoiClient({
     db: require("@aoijs/aoi.db"),
     dbType: "KeyValue",
     tables: ["main","custom"], // tables for the database
+    path: process.env.AOI_DB_PATH || "./database/",
     securityKey: process.env.DBsecurityKey || config.DBsecurityKey // Security Key with either env or config
   },
   disableFunctions: ["$clientToken"], // For safety reasons
