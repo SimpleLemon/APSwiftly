@@ -1,0 +1,31 @@
+{
+  "name": "APSwiftly",
+  "version": "2.2.2-build.2196",
+  "description": "A bot made in aoi.js v6 built for APStudy.",
+  "main": "index.js",
+  "homepage": "https://apstudy.org/",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "setup": "npm install",
+    "start": "node index.js",
+    "startWithoutDeprecation": "node index.js -- --no-deprecation",
+    "UpdateandStart": "git pull && node index.js"
+  },
+  "engines": {
+    "node": ">=20.x"
+  },
+  "keywords": [],
+  "author": "dodoGames",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "aoi.js": "^6.9.0",
+    "@aoijs/aoi.db": "^0.0.0",
+    "discord-gamecord": "^4.4.2",
+    "dotenv": "^16.4.7",
+    "axios": "^1.6.7",
+    "sharp": "^0.33.2"
+  },
+  "devDependencies": {
+    "chalk": "^4.1.2"
+  }
+}
