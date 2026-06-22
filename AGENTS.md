@@ -159,6 +159,8 @@ Defined in `handlers/functions.js` (aoi.js type) and `index.js` (DJS type):
 | LaTeX rendering | `https://math.now.sh` (via `$renderMath`) | `/latex` slash command |
 | Contributor role ping | `1258652618482389014` | `checkin` early/timeout pings |
 | Contributor category | `1356279309169328158` | `checkin`, `grammar` category lock |
+| Archive role | `1319501912638226543` | Permission to run the prefix `archive` command |
+| Archive category | `1287225603615096885` | Destination category for channels moved by `archive` |
 | Volunteer guild | `859910344393883710` | `addhours`, `slash-addhours` |
 | Volunteer form | `https://forms.gle/R2LMVDcugiPwJFJZ9` | `join` command button |
 | APStudy staff refs | User IDs in `contributor` welcome embed | Contributor onboarding |
@@ -217,6 +219,7 @@ APSwiftly/
 | `marketing` | Marketing intern acceptance DM flow |
 | `join` | Volunteer application embed with Google Form link |
 | `grammar` | Post grammar-tool suggestions in contributor category |
+| `archive` | Move the current channel to the archive category and post a notice with an optional reason |
 | `bypass`, `cheater`, `scam`, `noad` | Moderation / policy helper commands |
 
 ### Volunteer Tracking (`zVolunteer Tracking/`)
