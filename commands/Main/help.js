@@ -7,7 +7,7 @@ module.exports = {
   code: `$title[Help Menu]
 $description[Select one of the modules from the menu below!]
 $color[$getVar[embedcolor]]
-$addSelectMenu[1;string;helpmenu_$authorID;Select a module;1;1;false;Main:Explore commands from Main module:main:false;Entertainment:Explore commands from Entertainment module:entertainment:false;Leveling:Explore commands from Leveling module:leveling:false;Util:Explore commands from Util module:util:false$nonEscape[$get[devmodule]]]
+$addSelectMenu[1;string;helpmenu_$authorID;Select a module;1;1;false;Main:Explore commands from Main module:main:false;Entertainment:Explore commands from Entertainment module:entertainment:false;Leveling:Explore commands from Leveling module:leveling:false;Util:Explore commands from Util module:util:false;APStudy:Explore commands from APStudy module:apstudy:false;Volunteer:Explore commands from Volunteer module:volunteer:false$nonEscape[$get[devmodule]]]
 
 $let[devmodule;$if[$checkContains[$clientOwnerIDs[| ];$authorID]==true;#SEMI#Developer#COLON#Explore commands from Developer module#COLON#dev#COLON#false;]]
 $cooldown[2s; Slow down! Don't spam the command!
