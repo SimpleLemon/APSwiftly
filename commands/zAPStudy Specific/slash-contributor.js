@@ -22,9 +22,12 @@ APStudy Contributor Team}{color:White}}
 {actionRow:{button:Don't reply \— bot can't read.:secondary:unimportantcustomid2:true}};$slashOption[user]]
 
 $let[messageid;$channelSendMessage[$get[channel];Hello <@!$slashOption[user]>
-{newEmbed:{description:<@!784527187453542440> is Derek C (Founder/Manager)
-<@!1199894139446247526> is Tristan L (Director)}{color:7dfdff}}
+{newEmbed:{description:Derek Chen (Founder) | <@!784527187453542440>
+Tristan Lee (Director) | <@!1199894139446247526>
+Ryon Tom (Manager) | <@!1226697393219567657>
+Max Fronheiser (Asst. Manager) | <@!1501045455386312804>}{color:7dfdff}}
 {actionRow:{button:Update Info:secondary:ainfo:false}};false]]
+$modifyChannelPerms[$get[channel];1519016533005832332;+viewchannel]
 $modifyChannelPerms[$get[channel];$slashOption[user];+viewchannel]
 $wait[2s]
 $let[channel;$createChannel[$guildID;$slashOption[channelname];Text;true;1356279309169328158]]

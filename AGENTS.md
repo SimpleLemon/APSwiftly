@@ -158,7 +158,8 @@ Defined in `handlers/functions.js` (aoi.js type) and `index.js` (DJS type):
 | AI chat API | `https://api.apstudy.org/ai/discord?message=…` | `/ai` slash command |
 | LaTeX rendering | `https://math.now.sh` (via `$renderMath`) | `/latex` slash command |
 | Contributor role ping | `1258652618482389014` | `checkin` early/timeout pings |
-| Contributor category | `1356279309169328158` | `checkin`, `grammar` category lock |
+| Contributor category | `1356279309169328158` | `checkin`, `grammar` category lock; `contributor`, `slash-contributor`, `marketing` channel creation |
+| Contributor channel view role | `1519016533005832332` | View access on channels created by `contributor`, `slash-contributor`, `marketing` |
 | Archive role | `1319501912638226543` | Permission to run the prefix `archive` command |
 | Archive category | `1287225603615096885` | Destination category for channels moved by `archive` |
 | Volunteer guild | `859910344393883710` | `addhours`, `slash-addhours` |
