@@ -14,7 +14,7 @@ https://prowritingaid.com/
 https://www.languagetool.org/]
 $color[00FF00]
 $suppressErrors[{newEmbed:{title:Something went wrong!}{color:FF0000}{description:Please try again later.}}]
-$onlyIf[$or[$hasPerms[$guildID;$authorID;administrator]==true;$hasAnyRole[$guildID;$authorID;1519016533005832332]==true];{newEmbed:{title:Missing Permissions}{color:FF0000}{description:You need \`Administrator\` or the contributor staff role to run this command.}}]
+$onlyIf[$or[$hasPerms[$guildID;$authorID;administrator]==true;$hasRoles[$guildID;$authorID;1519016533005832332]==true];{newEmbed:{title:Missing Permissions}{color:FF0000}{description:You need \`Administrator\` or the <@&1519016533005832332> role to run this command.}}]
 $onlyForCategories[1356279309169328158;{newEmbed:{title:Error}{color:FF0000}{description:This command cannot be used here!}}]
 `
 }

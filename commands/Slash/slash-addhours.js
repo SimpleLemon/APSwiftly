@@ -12,7 +12,7 @@ $logVolunteerHours[$slashOption[user];$slashOption[hours];$authorID]
 $interactionReply[{newEmbed:{color:00ff00}{title:<a:tada:1324589971746586714> Volunteer Hours Added}{description:<@!$authorID> added \`$slashOption[hours]\` to <@!$slashOption[user]>. They now have \`$getGlobalUserVar[hours;$slashOption[user];custom]\` hours.}}]
 $sendDm[{newEmbed:{title:Volunteer Hours Update}{description:<@!$authorID> gave you \`$slashOption[hours]\` hour(s).
 You now have \`$getGlobalUserVar[hours;$slashOption[user];custom]\` hour(s).}{color:White}}{actionRow:{button:Don't reply \— bot can't read.:secondary:unimportantcustomid2:true}};$slashOption[user]]
-$onlyIf[$or[$hasPerms[$guildID;$authorID;administrator]==true;$hasAnyRole[$guildID;$authorID;1519016533005832332]==true];You need \`Administrator\` or the contributor staff role to run this command!
+$onlyIf[$or[$hasPerms[$guildID;$authorID;administrator]==true;$hasRoles[$guildID;$authorID;1519016533005832332]==true];{newEmbed:{title:Missing Permissions}{color:FF0000}{description:You need \`Administrator\` or the <@&1519016533005832332> role to run this command.}}
 {ephemeral}
 {interaction}]
 $onlyForGuilds[859910344393883710;You tried.
