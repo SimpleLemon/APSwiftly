@@ -12,7 +12,7 @@ $channelSendMessage[$get[channel];Hello <@!$mentioned[1]>
 {newEmbed:{description:Derek Chen (Founder) | <@!784527187453542440>
 Tristan Lee (Director) | <@!1199894139446247526>
 Ryon Tom (Manager) | <@!1226697393219567657>
-Max Fronheiser (Asst. Manager) | <@!1501045455386312804>}{color:7dfdff}};false]
+Max F. (Asst. Manager) | <@!1501045455386312804>}{color:7dfdff}};false]
 $modifyChannelPerms[$get[channel];1519016533005832332;+viewchannel]
 $modifyChannelPerms[$get[channel];$mentioned[1];+viewchannel]
 $wait[2s]

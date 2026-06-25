@@ -2,7 +2,7 @@ module.exports = [{
 	name: "checkin",
 	info: {
     description: "Check-in Reminder",
-    perms: ["`SendMessages,ManageChannels`"]
+    perms: ["`SendMessages,ManageChannels`", "`Administrator`", "`Role: 1519016533005832332`"]
 	},
 	code:`
 $setChannelVar[checkintimeoutid;$setTimeout[checkinTimeout;$math[$parseTime[$message[1]]/1000]s;{"channelID": "$channelID"};true];$channelID;custom]
@@ -13,8 +13,7 @@ To cancel this check in, press ❌}{color:00FF00}{reply}}
 $onlyIf[$parseTime[$message[1]]<=1814400000;{newEmbed:{title:Incorrect Usage}{description:The maximum time limit is 21 days!}{color:Red}}]
 $onlyIf[$parseTime[$message[1]]!=-1;{newEmbed:{title:Incorrect Usage}{description:Enter a valid time with format like \`1m/1d/1h\`}{color:Red}}]
 $onlyIf[$getChannelVar[checkinid;$channelID;custom]==;{newEmbed:{title:A Check-In is already running}{description:Cancel the old check-in before creating a new one!}{color:Red}}]
-$onlyIf[$hasPerms[$guildID;$authorID;administrator]==true;{newEmbed:{title:Incorrect Usage}{color:FF0000}{description:**Usage:**
-\`checkin [time]\`}}]
+$onlyIf[$or[$hasPerms[$guildID;$authorID;administrator]==true;$hasAnyRole[$guildID;$authorID;1519016533005832332]==true];{newEmbed:{title:Missing Permissions}{color:FF0000}{description:You need \`Administrator\` or the contributor staff role to run this command.}}]
 $onlyForCategories[1356279309169328158;{newEmbed:{title:Error}{color:FF0000}{description:This command cannot be used here!}}]
 `
 }, {

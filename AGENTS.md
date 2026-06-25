@@ -114,6 +114,7 @@ Defined in `handlers/functions.js` (aoi.js type) and `index.js` (DJS type):
 | `$excludeSpecialChars` | aoi.js | Strip special characters |
 | `$randomColor` | djs | Random hex color (user apps) |
 | `$owoify` | aoi.js | OwO text transform |
+| `$logVolunteerHours` | aoi.js | Log volunteer hours added to staff log channel (`targetUserID`, `hoursAmount`, `actorUserID`) |
 | `$messageAttachments` | djs | Comma-separated attachment URLs |
 | `$renderMath` | djs | LaTeX → PNG via math.now.sh + sharp; trash-reaction delete |
 
@@ -159,7 +160,8 @@ Defined in `handlers/functions.js` (aoi.js type) and `index.js` (DJS type):
 | LaTeX rendering | `https://math.now.sh` (via `$renderMath`) | `/latex` slash command |
 | Contributor role ping | `1258652618482389014` | `checkin` early/timeout pings |
 | Contributor category | `1356279309169328158` | `checkin`, `grammar` category lock; `contributor`, `slash-contributor`, `marketing` channel creation |
-| Contributor channel view role | `1519016533005832332` | View access on channels created by `contributor`, `slash-contributor`, `marketing` |
+| Contributor channel view role | `1519016533005832332` | View access on contributor channels; also grants `checkin`, `grammar`, `addhours` (with Administrator) |
+| Volunteer hours log channel | `1519543164891955401` (guild `867928393558151228`) | `$logVolunteerHours` embed when hours are added |
 | Archive role | `1319501912638226543` | Permission to run the prefix `archive` command |
 | Archive category | `1287225603615096885` | Destination category for channels moved by `archive` |
 | Volunteer guild | `859910344393883710` | `addhours`, `slash-addhours` |
@@ -214,12 +216,12 @@ APSwiftly/
 
 | Command | Purpose |
 |---------|---------|
-| `checkin` | Scheduled contributor check-in reminders (buttons + timeout) |
+| `checkin` | Scheduled contributor check-in reminders (buttons + timeout); Administrator or role `1519016533005832332` |
 | `contributor` | Create contributor channel with permissions |
 | `slash-contributor` | Slash flow for contributor program acceptance DM |
 | `marketing` | Marketing intern acceptance DM flow |
 | `join` | Volunteer application embed with Google Form link |
-| `grammar` | Post grammar-tool suggestions in contributor category |
+| `grammar` | Post grammar-tool suggestions in contributor category; Administrator or role `1519016533005832332` |
 | `archive` | Move the current channel to the archive category and post a notice with an optional reason |
 | `bypass`, `cheater`, `scam`, `noad` | Moderation / policy helper commands |
 
@@ -227,7 +229,7 @@ APSwiftly/
 
 | Command | Purpose |
 |---------|---------|
-| `addhours` / `slash-addhours` | Admin: add volunteer hours (guild `859910344393883710` only) |
+| `addhours` / `slash-addhours` | Add volunteer hours (guild `859910344393883710` only); logs to `1519543164891955401`; Administrator or role `1519016533005832332` |
 | `hours` | View a user's volunteer hours |
 | `leaderboard` (`rich`, `lb`) | Top-10 volunteer hours leaderboard |
 | `pvsa` | Presidential Volunteer Service Award eligibility info |

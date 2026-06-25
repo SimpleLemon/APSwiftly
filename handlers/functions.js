@@ -79,6 +79,14 @@ $let[createlist;$advancedReplaceText[{text};{seperator};#SEMI#]]`
   type: "aoi.js",
   params: ["text"],
   code: `$replaceTextWithRegex[$replaceTextWithRegex[{text};/r|l/;g;w];/R|L/;g;W]`
+},{
+  name: "$logVolunteerHours",
+  type: "aoi.js",
+  params: ["targetUserID", "hoursAmount", "actorUserID"],
+  code: `$channelSendMessage[1519543164891955401;{newEmbed:{title:Volunteer Hours Added}{description:**User:** <@!{targetUserID}>
+**Hours added:** {hoursAmount}
+**Added by:** <@!{actorUserID}>
+**New total:** \`$getGlobalUserVar[hours;{targetUserID};custom]\` hours}{color:00ff00}{footer:Volunteer hours log}{timestamp}}]`
 },{ // credit goes to https://github.com/aoijs/aoi.js/pull/678 for the original code
   name: "$messageAttachments",
   type: "djs",

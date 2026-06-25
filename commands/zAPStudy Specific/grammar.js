@@ -2,7 +2,7 @@ module.exports = {
 	name: "grammar",
 	info: {
     description: "Ask Contributor to use Grammarly",
-    perms: ["`SendMessages,ManageChannels`"]
+    perms: ["`SendMessages,ManageChannels`", "`Administrator`", "`Role: 1519016533005832332`"]
 	},
 	code:`$title[Grammar Checking Tools]
 $description[> To ensure readability, please use a grammar checking tool.
@@ -14,8 +14,7 @@ https://prowritingaid.com/
 https://www.languagetool.org/]
 $color[00FF00]
 $suppressErrors[{newEmbed:{title:Something went wrong!}{color:FF0000}{description:Please try again later.}}]
-$onlyIf[$hasPerms[$guildID;$authorID;administrator]==true;{newEmbed:{title:Incorrect Usage}{color:FF0000}{description:**Usage:**
-\`checkin [time]\`}}]
+$onlyIf[$or[$hasPerms[$guildID;$authorID;administrator]==true;$hasAnyRole[$guildID;$authorID;1519016533005832332]==true];{newEmbed:{title:Missing Permissions}{color:FF0000}{description:You need \`Administrator\` or the contributor staff role to run this command.}}]
 $onlyForCategories[1356279309169328158;{newEmbed:{title:Error}{color:FF0000}{description:This command cannot be used here!}}]
 `
 }
