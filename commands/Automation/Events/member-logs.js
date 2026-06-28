@@ -83,7 +83,7 @@ $addTimestamp
 $color[Blue]
 
 $onlyIf[$getGuildVar[roleuserslog]==on;]
-$onlyIf[$newMember[roles]!=$oldMember[roles];]
+$onlyIf[$newMember[addedRoles]!=;]
 $onlyIf[$hasPerms[$guildID;$clientID;viewauditlog]==true;In order to have Member Update logs work, I must have \`ViewAuditLog\` permission!]
 $onlyIf[$hasPermsInChannel[$getGuildVar[membereventschannel];$clientID;viewchannel;sendmessages]==true;]
 $onlyIf[$guildChannelExists[$guildID;$getGuildVar[membereventschannel]]==true;]
@@ -103,7 +103,7 @@ $addTimestamp
 $color[Blue]
 
 $onlyIf[$getGuildVar[roleuserslog]==on;]
-$onlyIf[$newMember[roles]!=$oldMember[roles];]
+$onlyIf[$oldMember[removedRoles]!=;]
 $onlyIf[$hasPerms[$guildID;$clientID;viewauditlog]==true;In order to have Member Update logs work, I must have \`ViewAuditLog\` permission!]
 $onlyIf[$hasPermsInChannel[$getGuildVar[membereventschannel];$clientID;viewchannel;sendmessages]==true;]
 $onlyIf[$guildChannelExists[$guildID;$getGuildVar[membereventschannel]]==true;]
