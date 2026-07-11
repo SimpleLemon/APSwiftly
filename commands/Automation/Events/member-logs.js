@@ -96,14 +96,14 @@ $onlyIf[$guildID==$guildID;]`
     code: `
 $author[$username[$authorID];$authorAvatar]
 $title[Role Removed]
-$description[$oldMember[removedRoles]
+$description[$newMember[removedRoles]
 ]
 $footer[User ID: $authorID]
 $addTimestamp
 $color[Blue]
 
 $onlyIf[$getGuildVar[roleuserslog]==on;]
-$onlyIf[$oldMember[removedRoles]!=;]
+$onlyIf[$newMember[removedRoles]!=;]
 $onlyIf[$hasPerms[$guildID;$clientID;viewauditlog]==true;In order to have Member Update logs work, I must have \`ViewAuditLog\` permission!]
 $onlyIf[$hasPermsInChannel[$getGuildVar[membereventschannel];$clientID;viewchannel;sendmessages]==true;]
 $onlyIf[$guildChannelExists[$guildID;$getGuildVar[membereventschannel]]==true;]

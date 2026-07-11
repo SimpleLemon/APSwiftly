@@ -114,7 +114,7 @@ Defined in `handlers/functions.js` (aoi.js type) and `index.js` (DJS type):
 | `$excludeSpecialChars` | aoi.js | Strip special characters |
 | `$randomColor` | djs | Random hex color (user apps) |
 | `$owoify` | aoi.js | OwO text transform |
-| `$logVolunteerHours` | aoi.js | Log volunteer hours added to staff log channel (`targetUserID`, `hoursAmount`, `actorUserID`) |
+| `$logVolunteerHours` | aoi.js | Log volunteer hours added to staff log channel (`targetUserID`, `hoursAmount`, `actorUserID`, `newTotal`) |
 | `$messageAttachments` | djs | Comma-separated attachment URLs |
 | `$renderMath` | djs | LaTeX → PNG via math.now.sh + sharp; trash-reaction delete |
 
