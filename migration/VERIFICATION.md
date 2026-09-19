@@ -8,7 +8,20 @@ Check-in delivery is **at-most-once application dispatch**, not guaranteed deliv
 
 Validation always uses an in-memory database and does not connect to Discord, register commands, or execute timers. Production snapshots are read-only inputs to tests, with imported databases created under temporary directories. Local snapshot comparisons cover 174 values but no real pending production timers; synthetic fixtures cover timer migration.
 
-Verified on macOS with Node 25.9.0 (87/87 passing tests), and a clean Node 20.20.2 production-dependency install (83 passing; four private-snapshot tests skipped because no snapshot was copied). The production Linux runtime and live Discord environment still require the checks below. SQLite uses WAL with synchronous=FULL to persist the send claim before the network request.
+Verified on macOS with Node 25.9.0 and on the production Linux/Node 20.20.2 runtime: 89/89 tests passed, including the final production snapshot. Offline validation loaded 91 prefix commands, 82 aliases, 20 slash handlers, 140 components, 15 events and two job handlers with no registry errors. SQLite uses WAL with synchronous=FULL to persist the send claim before the network request.
+
+## Production cutover evidence — September 19, 2026
+
+- Production tracks `codex/discordjs-migration-checkin-reliability`. The old process was stopped before taking the final source snapshot; only the new bot runs. Nest remained active throughout the cutover.
+- All 174 records (66 main, 108 custom) were imported and archived with per-value verification and SQLite integrity checks. Source checksum: `60e8e2d11831e6f97d17ffa0c29317b8aff94addbf991f96c3cf9db59459686d`. The source contained no persisted timeout jobs. Volunteer-hour values match the original archive.
+- Root-only backup directory: `/var/backups/apswiftly/discordjs-cutover-20260919/`. It contains `legacy-deployment/`, `aoi-database/`, configuration, the old systemd unit, `migration-report.json`, a pre-restart check-in snapshot, and `verified-post-cutover.sqlite`.
+- Authenticated control status returns HTTP 200 with Discord ready. The systemd service remains active with no automatic restarts after the final code update.
+- Discord registrations match the definitions: 18 global slash commands, two guild commands (`addhours`, `noreply`), and the pre-existing Activity entry point. Obsolete global `/addhours` was removed. The live application exposed API error 50240 until synchronization was updated to preserve its Activity entry point; a regression test now covers this. See [Discord application-command documentation](https://docs.discord.com/developers/docs/interactions/slash-commands).
+- All 19 contributor text channels were readable and had the required messaging/history/embed permissions. Startup created 11 automatic timers for eligible idle channels. A controlled service restart preserved every timer ID, scheduling-message ID and due time, without creating additional timers. Live Discord history matched database message IDs with no duplicate check-ins.
+- People interacted with timers during verification: one was sent early and others were canceled, including an administrator opt-out. These transitions were preserved, including opt-out state. A canceled scheduling message was deleted in Discord; the canceled database record remains.
+- Four orphaned legacy message references were quarantined without replay: three deleted channels and one already archived channel. No current contributor channel is blocked by them.
+
+These checks establish deployment health and the observed restart behavior. They do not constitute a live test of every command or an absolute guarantee of external Discord delivery; the controlled checks below remain useful for future releases.
 
 ## Before production cutover
 

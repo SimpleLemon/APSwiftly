@@ -374,7 +374,7 @@ Production host: same VPS as [nest.apstudy.org](https://nest.apstudy.org) (see `
 
 **Deploy (manual):** push the intended release branch, check it out on the VPS with its upstream configured, then run `deploy/update.sh` as `deployer`. It fast-forwards the current branch, installs with `npm ci --omit=dev`, validates offline, and restarts APSwiftly. `package-lock.json` is tracked for repeatable installs.
 
-> **Cutover is a separate future task.** The migrated SQLite database must be produced from the production aoi.db snapshot and deployed deliberately; the runtime no longer reads aoi.db.
+> **Production cutover completed September 19, 2026.** Production tracks `codex/discordjs-migration-checkin-reliability`. The legacy process was stopped before a final read-only import of 174 records; the runtime now uses SQLite. Backups of the legacy deployment, source database, configuration, systemd unit, migration report, and verified post-cutover SQLite are retained under `/var/backups/apswiftly/discordjs-cutover-20260919/` (root-only). Do not restart the legacy deployment without reconciling post-cutover data and reminders.
 
 **Operations:**
 
@@ -388,7 +388,9 @@ journalctl -u apswiftly --no-pager -n 50
 ## Production Notes
 
 - Version: `3.0.0-build.2196`.
-- No production changes were made during the migration; the production aoi.db was only read.
+- Production uses discord.js + SQLite as of September 19, 2026; the original aoi.db remains unchanged. `BOT_OWNER_IDS` is configured from the verified application owner. The authenticated local control API remains available to Nest.
+- All 89 tests passed on the production Linux/Node 20.20.2 runtime with the final source snapshot. Live registration, permissions/history for 19 contributor channels, database integrity, volunteer-hour preservation, control readiness, and restart behavior were verified; no duplicate check-in messages were found.
+- Four orphaned legacy check-ins remain quarantined as `uncertain`: three deleted channels and one already archived channel. They do not block any current contributor channel and must never be replayed automatically.
 - `config.json` is optional; defaults apply if missing.
 - Database path is env-driven via `SQLITE_PATH`.
 - After changing slash definitions, use `refreshslash` (owner) or restart; definition-aware synchronization updates global and managed guild scopes. Previously managed guild scopes are recorded in `meta.slash_managed_guilds` so obsolete definitions can be cleared.
