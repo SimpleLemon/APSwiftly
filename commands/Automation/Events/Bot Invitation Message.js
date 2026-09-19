@@ -1,30 +1,64 @@
-module.exports = [{
-    name: "Bot Invitation Message",
-    type: "guildJoin",
-    channel: "$randomChannelID[$guildID;all]",
-    code: `
-    $ifAwaited[$membersCount[$guildID;all;true]>=$getVar[servermemberrequirement];{execute:invitationgreeting};{execute:failedmemberrequirement}]
+"use strict";
 
-    `
-    },{
-    name: "invitationgreeting",
-    type: "awaited",
-    code: `
-$title[Welcome to Dodo-Bot!]
-$description[Dodo-Bot is a personal bot project made in aoi.js v6 aiming to both entertain and provide users some features to use.]
-$addField[Confused?;If you need information about commands in the bot then use the command \`$getGuildVar[prefix]commandinfo <cmdname>\` to do so!]
-$addField[Getting started;To explore the bot, use the command \`$getGuildVar[prefix]help\`. This let's you view all of the commands of the bot in a selectmenu as modules!]
-$thumbnail[https://us-east-1.tixte.net/uploads/dodogames.wants.solutions/dodo-bot-logo.png]
-$footer[Made with ❤️ by $username[632607624742961153]!]
-$color[$getVar[embedcolor]]
-$addButton[1;Source code;5;https://github.com/ddodogames/Dodo-Bot;false]
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
+const { resolveLogChannel } = require("../../../src/services/logging");
 
-$useChannel[$get[channelselector]]
-$onlyIf[$hasPermsInChannel[$get[channelselector];$clientID;sendmessages;viewchannel]==true;]
-$let[channelselector;$advancedReplaceText[$checkCondition[$guildSystemChannelID[$guildID]==];true;$randomChannelID[$guildID;Text];false;$guildSystemChannelID[$guildID]]]
-$onlyIf[$getVar[botinvitationmessage]==on;]`
-    },{
-    name: "failedmemberrequirement",
-    type: "awaited",
-    code: `$let[hidetext;$clientLeave[$guildID]]`
-    }]
+const SOURCE_CODE_URL = "https://github.com/SimpleLemon/APSwiftly";
+const DODO_LOGO = "https://us-east-1.tixte.net/uploads/dodogames.wants.solutions/dodo-bot-logo.png";
+
+module.exports = [
+  {
+    event: "guildJoin",
+    async execute(ctx) {
+      const { client, guild } = ctx;
+      if (!guild) return;
+
+      const requirement = Number(client.db.getVar("servermemberrequirement")) || 0;
+      if (guild.memberCount < requirement) {
+        await guild.leave().catch(() => {});
+        return;
+      }
+
+      if (client.db.getVar("botinvitationmessage") !== "on") return;
+
+      const configured = client.db.getGuildVar(guild.id, "welcomechannel");
+      const channel =
+        configured && configured !== "none"
+          ? await resolveLogChannel(client, guild, "welcomechannel")
+          : guild.systemChannel ??
+            guild.channels.cache.find(
+              (candidate) =>
+                candidate.isTextBased() &&
+                candidate.permissionsFor(guild.members.me)?.has(["ViewChannel", "SendMessages"])
+            );
+
+      if (!channel) return;
+
+      const prefix = client.db.getGuildVar(guild.id, "prefix");
+      const embed = new EmbedBuilder()
+        .setTitle("Welcome to APSwiftly!")
+        .setDescription(
+          "APSwiftly is APStudy’s community bot, built with discord.js and SQLite."
+        )
+        .addFields(
+          {
+            name: "Confused?",
+            value: `If you need information about commands in the bot then use the command \`${prefix}commandinfo <cmdname>\` to do so!`,
+          },
+          {
+            name: "Getting started",
+            value: `To explore the bot, use the command \`${prefix}help\`. This let's you view all of the commands of the bot in a selectmenu as modules!`,
+          }
+        )
+        .setThumbnail(DODO_LOGO)
+        .setFooter({ text: "Made with ❤️ by dodoGames!" })
+        .setColor(client.db.getVar("embedcolor"));
+
+      const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder().setLabel("Source code").setStyle(ButtonStyle.Link).setURL(SOURCE_CODE_URL)
+      );
+
+      await channel.send({ embeds: [embed], components: [row] });
+    },
+  },
+];

@@ -1,14 +1,25 @@
+"use strict";
+
+const { pick } = require("../../../src/utils/random");
+
 module.exports = {
-name: "yesorno",
-info: {
+  name: "yesorno",
+  info: {
     description: "Randomly Returns either `yes` or `no`.",
-    perms: ["`SendMessages`"]
-},
-code: `> $message
-*$randomText[yes;no]*
-$onlyIf[$charCount[$message]<=200;Your question can't be longer than 200 characters]
-$onlyIf[$message!=;Please Type something.]
-$disableMentionType[all]
-$cooldown[2s; Slow down! Don't spam the command!
-Time remaining: <t:$truncate[$divide[$sum[$getCooldownTime[2s;user;yesorno;$authorID];$dateStamp];1000]]:R>]`
-}
+    perms: ["`SendMessages`"],
+  },
+  cooldown: {
+    time: 2000,
+    message: "Slow down! Don't spam the command!\nTime remaining: %timestamp%",
+  },
+  async execute(ctx) {
+    if (ctx.rawArgs.length === 0) return ctx.send("Please Type something.");
+    if (ctx.rawArgs.length > 200) return ctx.send("Your question can't be longer than 200 characters");
+
+    const answer = pick(["yes", "no"]);
+    await ctx.send({
+      content: `> ${ctx.rawArgs}\n*${answer}*`,
+      allowedMentions: { parse: [] },
+    });
+  },
+};

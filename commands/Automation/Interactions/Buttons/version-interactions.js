@@ -1,81 +1,115 @@
-module.exports = [{
-    type: "interaction",
-    prototype: "button",
-    code: `
-    $interactionUpdate[{newEmbed:{title:Changes}{description:
-* Added a new command called \`banner\`
-* Added support for RGB code in \`randomcolor\` command (exclusive to prefix only)
-* Added uncompact mode for perms list from integration logs when viewing a bot's perms
-* Gitbuilds are now called "Canary"
-  * Because of this, \`gitbuilds\` command has been renamed to \`canary\`
-* Added alias \`randomrgb\` and \`canarybuilds\` for \`randomcolor\` and \`canary\`
-    }{color:$getVar[embedcolor]}$nonEscape[$get[devbuild]]}{actionRow:{button:Home:2:homebutton_$authorID:false:🏠}{button:Changes:2:versionchanges_$authorID:true}{button:Bug Fixes:2:versionbugfixes_$authorID:false}{button:Other:2:versionother_$authorID:false}}{actionRow:{button:Changelog history:5:https#COLON#//github.com/ddodogames/Dodo-Bot/releases:false:📜}}]
+"use strict";
 
-$let[devbuild;$if[$getVar[pre_release]==on;{footer:Testing is recommended:https#COLON#//us-east-1.tixte.net/uploads/dodogames.wants.solutions/refreshedredwarning2.png};]]
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
 
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-  {ephemeral}
-{interaction}
-  ]
-  $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==versionchanges;]
-`
-},{
-    type: "interaction",
-    prototype: "button",
-    code: `
-    $interactionUpdate[{newEmbed:{title:Bug Fixes}{description:
-* Fixed description of \`hangman\` cmd's \`--themes\` flag changing after applying a theme
-    }{color:$getVar[embedcolor]}$nonEscape[$get[devbuild]]}{actionRow:{button:Home:2:homebutton_$authorID:false:🏠}{button:Changes:2:versionchanges_$authorID:false}{button:Bug Fixes:2:versionbugfixes_$authorID:true}{button:Other:2:versionother_$authorID:false}}{actionRow:{button:Changelog history:5:https#COLON#//github.com/ddodogames/Dodo-Bot/releases:false:📜}}]
+const DEVBUILD_FOOTER = {
+  text: "Testing is recommended",
+  iconURL: "https://us-east-1.tixte.net/uploads/dodogames.wants.solutions/refreshedredwarning2.png",
+};
 
-$let[devbuild;$if[$getVar[pre_release]==on;{footer:Testing is recommended:https#COLON#//us-east-1.tixte.net/uploads/dodogames.wants.solutions/refreshedredwarning2.png};]]
+const VERSION_PAGES = [
+  { label: "Home", id: "homebutton", emoji: "🏠" },
+  { label: "Changes", id: "versionchanges" },
+  { label: "Bug Fixes", id: "versionbugfixes" },
+  { label: "Other", id: "versionother" },
+];
 
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-   {ephemeral}
-{interaction}
-    ]
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==versionbugfixes;]
-`
-},{
-      type: "interaction",
-    prototype: "button",
-    code: `$interactionUpdate[{newEmbed:{title:Other}{description:
-* Added a couple of design and wording changes in this release
-* New set of random colors has been introduced to \`howgamer\` and \`say\` command (embed mode)
-* (Source code) Bumped the package \`dotenv\` to version \`16.4.7\`
-* (Source code) Dodo-Bot can now be auto updated with just \`git pull\`
-* (Pre-release only) "Build info" is now a flag as part of \`version\` command
-  * It can be accessed using \`$getGuildVar[prefix]version --buildinfo\` to do so!
- }{color:$getVar[embedcolor]}$nonEscape[$get[devbuild]]}{actionRow:{button:Home:2:homebutton_$authorID:false:🏠}{button:Changes:2:versionchanges_$authorID:false}{button:Bug Fixes:2:versionbugfixes_$authorID:false}{button:Other:2:versionother_$authorID:true}}{actionRow:{button:Changelog history:5:https#COLON#//github.com/ddodogames/Dodo-Bot/releases:false:📜}}]
+const CHANGES_DESCRIPTION = "Native discord.js commands, SQLite storage, durable check-ins, inactivity automation, and permission-aware help.";
+const BUG_FIXES_DESCRIPTION = "Check-in delivery is protected against repeated clicks and restart replay. Slash registration, settings, logging, and interaction handling have been repaired.";
 
-$let[devbuild;$if[$getVar[pre_release]==on;{footer:Testing is recommended:https#COLON#//us-east-1.tixte.net/uploads/dodogames.wants.solutions/refreshedredwarning2.png};]]
+function pageRow(userId, active) {
+  const components = VERSION_PAGES.filter((page) => !(active === "homebutton" && page.id === "homebutton")).map(
+    (page) => {
+      const button = new ButtonBuilder()
+        .setLabel(page.label)
+        .setStyle(ButtonStyle.Secondary)
+        .setCustomId(`${page.id}_${userId}`)
+        .setDisabled(page.id === active);
+      if (page.emoji) button.setEmoji(page.emoji);
+      return button;
+    }
+  );
 
- $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
- {ephemeral}
-{interaction}
- ]
- $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==versionother;]
+  return new ActionRowBuilder().addComponents(...components);
+}
 
+function changelogRow() {
+  return new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setLabel("Changelog history")
+      .setStyle(ButtonStyle.Link)
+      .setURL("https://github.com/SimpleLemon/APSwiftly/releases")
+      .setEmoji("📜")
+  );
+}
 
-      `
-},{
-      type: "interaction",
-    prototype: "button",
-    code: `$interactionUpdate[{newEmbed:{title:Dodo-Bot version}{description:
-* **Version**#COLON# $getVar[version]$get[Revision]
-* **Release type**#COLON# $getVar[release_type]
-* **$get[releasedatetype]**#COLON# <t:$truncate[$divide[$getVar[buildDate];1000]]:f>
- }{color:$getVar[embedcolor]}$nonEscape[$get[devbuild]]}{actionRow:{button:Changes:2:versionchanges_$authorID:false}{button:Bug Fixes:2:versionbugfixes_$authorID:false}{button:Other:2:versionother_$authorID:false}}{actionRow:{button:Changelog history:5:https#COLON#//github.com/ddodogames/Dodo-Bot/releases:false:📜}}]
+function pageEmbed(ctx, title, description) {
+  const embed = new EmbedBuilder()
+    .setTitle(title)
+    .setDescription(description)
+    .setColor(ctx.getVar("embedcolor"));
+  if (ctx.getVar("pre_release") === "on") embed.setFooter(DEVBUILD_FOOTER);
+  return embed;
+}
 
- $let[Revision;$advancedReplaceText[$checkCondition[$getVar[buildRevision]!=0];true; (Revision $getVar[buildRevision]);false; ]]
- $let[releasedatetype;$advancedReplaceText[$checkCondition[$getVar[showbuildinfo]==on];true;Last updated on;false;Released on]]
- $let[devbuild;$if[$getVar[pre_release]==on;{footer:Testing is recommended:https#COLON#//us-east-1.tixte.net/uploads/dodogames.wants.solutions/refreshedredwarning2.png};]]
+function otherDescription() {
+  return "APSwiftly is based on Dodo-Bot. Upstream attribution is retained in the credits. Deployment and database migration are separate operational steps.";
+}
+function homeDescription() {
+  return `**APSwiftly ${require("../../../../package.json").version}**\nRuntime: discord.js + SQLite`;
+}
 
- $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
- {ephemeral}
-{interaction}
- ]
- $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==homebutton;]
-
-
-      `
-    }]
+module.exports = [
+  {
+    component: "button",
+    customId: "versionchanges",
+    async execute(ctx) {
+      if (ctx.parts[1] !== ctx.authorId) {
+        return ctx.reply("This interaction is not for you.", { flags: 64 });
+      }
+      await ctx.update({
+        embeds: [pageEmbed(ctx, "Changes", CHANGES_DESCRIPTION)],
+        components: [pageRow(ctx.authorId, "versionchanges"), changelogRow()],
+      });
+    },
+  },
+  {
+    component: "button",
+    customId: "versionbugfixes",
+    async execute(ctx) {
+      if (ctx.parts[1] !== ctx.authorId) {
+        return ctx.reply("This interaction is not for you.", { flags: 64 });
+      }
+      await ctx.update({
+        embeds: [pageEmbed(ctx, "Bug Fixes", BUG_FIXES_DESCRIPTION)],
+        components: [pageRow(ctx.authorId, "versionbugfixes"), changelogRow()],
+      });
+    },
+  },
+  {
+    component: "button",
+    customId: "versionother",
+    async execute(ctx) {
+      if (ctx.parts[1] !== ctx.authorId) {
+        return ctx.reply("This interaction is not for you.", { flags: 64 });
+      }
+      await ctx.update({
+        embeds: [pageEmbed(ctx, "Other", otherDescription(ctx))],
+        components: [pageRow(ctx.authorId, "versionother"), changelogRow()],
+      });
+    },
+  },
+  {
+    component: "button",
+    customId: "homebutton",
+    async execute(ctx) {
+      if (ctx.parts[1] !== ctx.authorId) {
+        return ctx.reply("This interaction is not for you.", { flags: 64 });
+      }
+      await ctx.update({
+        embeds: [pageEmbed(ctx, "APSwiftly version", homeDescription(ctx))],
+        components: [pageRow(ctx.authorId, "homebutton"), changelogRow()],
+      });
+    },
+  },
+];

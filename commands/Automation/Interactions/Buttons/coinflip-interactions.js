@@ -1,43 +1,71 @@
-module.exports = [{
-  name: "headsinteraction",
-  type: "interaction",
-  $if: "old",
-  prototype: "button",
-  code: `$if[$random[1;100]>=38&&$random[1;100]<89]
-  
-  $interactionFollowUp[GG, **$username**! The coin landed on **Heads**!]
-  
-  $interactionUpdate[{newEmbed:{title:$get[embedtitle]}{description:$get[embeddescription]}{color:$getVar[embedcolor]}}{actionRow:{button:Heads:3:headsbutton:true}{button:Tails:2:tailsbutton:true}}]
-  $else
-  $interactionFollowUp[You lost! The coin landed on **Tails**!]
-  
-  $interactionUpdate[{newEmbed:{title:$get[embedtitle]}{description:$get[embeddescription]}{color:$getVar[embedcolor]}}{actionRow:{button:Heads:4:headsbutton:true}{button:Tails:2:tailsbutton:true}}]
-  $endif
-  
-$let[embeddescription;$getEmbed[$channelID;$interactionData[message.id];1;description]]
-$let[embedtitle;$getEmbed[$channelID;$interactionData[message.id];1;title]]
+"use strict";
 
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
+const { randomInt } = require("../../../../src/utils/random");
 
-  `
-},{
-  name: "tailsinteraction",
-  type: "interaction",
-  $if: "old",
-  prototype: "button",
-  code: `$if[$random[1;100]>=38&&$random[1;100]<89]
-  
-  $interactionFollowUp[GG, **$username**! The coin landed on **Tails**!]
-  
-  $interactionUpdate[{newEmbed:{title:$get[embedtitle]}{description:$get[embeddescription]}{color:$getVar[embedcolor]}}{actionRow:{button:Heads:2:headsbutton:true}{button:Tails:3:tailsbutton:true}}]
-  $else
-  $interactionFollowUp[You lost! The coin landed on **Hands**!]
-  
-  $interactionUpdate[{newEmbed:{title:$get[embedtitle]}{description:$get[embeddescription]}{color:$getVar[embedcolor]}}{actionRow:{button:Heads:2:headsbutton:true}{button:Tails:4:tailsbutton:true}}]
-  $endif
-  
-$let[embeddescription;$getEmbed[$channelID;$interactionData[message.id];1;description]]
-$let[embedtitle;$getEmbed[$channelID;$interactionData[message.id];1;title]]
+function gameRow(headsStyle, tailsStyle) {
+  return new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId("headsbutton")
+      .setLabel("Heads")
+      .setStyle(headsStyle)
+      .setDisabled(true),
+    new ButtonBuilder()
+      .setCustomId("tailsbutton")
+      .setLabel("Tails")
+      .setStyle(tailsStyle)
+      .setDisabled(true)
+  );
+}
 
+function originalEmbed(ctx) {
+  const embed = ctx.message.embeds[0];
+  return new EmbedBuilder()
+    .setTitle(embed?.title ?? "")
+    .setDescription(embed?.description ?? "")
+    .setColor(ctx.getVar("embedcolor"));
+}
 
-  `
-}]
+function didWin() {
+  return randomInt(1, 100) >= 38 && randomInt(1, 100) < 89;
+}
+
+async function playCoinFlip(ctx, choice) {
+  const win = didWin();
+  const headsStyle = choice === "heads" ? (win ? ButtonStyle.Success : ButtonStyle.Danger) : ButtonStyle.Secondary;
+  const tailsStyle = choice === "tails" ? (win ? ButtonStyle.Success : ButtonStyle.Danger) : ButtonStyle.Secondary;
+
+  await ctx.update({ embeds: [originalEmbed(ctx)], components: [gameRow(headsStyle, tailsStyle)] });
+
+  if (choice === "heads") {
+    await ctx.followUp(
+      win
+        ? `GG, **${ctx.user.username}**! The coin landed on **Heads**!`
+        : "You lost! The coin landed on **Tails**!"
+    );
+    return;
+  }
+
+  await ctx.followUp(
+    win
+      ? `GG, **${ctx.user.username}**! The coin landed on **Tails**!`
+      : "You lost! The coin landed on **Hands**!"
+  );
+}
+
+module.exports = [
+  {
+    component: "button",
+    customId: "headsbutton",
+    async execute(ctx) {
+      await playCoinFlip(ctx, "heads");
+    },
+  },
+  {
+    component: "button",
+    customId: "tailsbutton",
+    async execute(ctx) {
+      await playCoinFlip(ctx, "tails");
+    },
+  },
+];

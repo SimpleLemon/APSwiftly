@@ -1,31 +1,77 @@
+"use strict";
+
+const {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder,
+  PermissionFlagsBits,
+} = require("discord.js");
+const { httpJson } = require("../../../src/utils/http");
+
+const API_URL = "https://api.gamecord.xyz/wyr";
+
+function voteRow() {
+  return new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setLabel("0")
+      .setStyle(ButtonStyle.Secondary)
+      .setCustomId("wyr1-votebutton")
+      .setEmoji("1️⃣"),
+    new ButtonBuilder()
+      .setLabel("0")
+      .setStyle(ButtonStyle.Secondary)
+      .setCustomId("wyr2-votebutton")
+      .setEmoji("2️⃣")
+  );
+}
+
 module.exports = {
-name: "would-you-rather",
-info: {
+  name: "would-you-rather",
+  aliases: "wyr",
+  info: {
     description: "Starts a wyr game of two options to choose from.",
     perms: ["`SendMessages`", "`AddReactions` (if using `--usereactions` flag)"],
-    flags: ["`--usereactions`"]
-},
-$if: "old",
-aliases: "wyr",
-code: `$title[Would you rather...]
-$addField[**Option 2**;$getObjectProperty[api;data.option2]]
-$addField[**Option 1**;$getObjectProperty[api;data.option1]]
-$color[$getVar[embedcolor]]
+    flags: ["`--usereactions`"],
+  },
+  cooldown: {
+    time: 4000,
+    message: "Slow down! Don't spam the command!\nTime remaining: %timestamp%",
+  },
+  async execute(ctx) {
+    const response = await httpJson(API_URL);
+    const data = response?.data;
+    if (!data || typeof data !== "object") {
+      return ctx.send("Unable to fetch data for wyr. Please try again later.");
+    }
 
-$if[$checkContains[$message;--usereactions;—usereactions]==true]
-$addClientReactions[1️⃣;2️⃣]
-$onlyIf[$hasPermsInChannel[$channelID;$clientID;addreactions]==true;
-I do not have permissions to add reactions to my message in this channel. Please either grant me \`AddReactions\` permission or use buttons instead.
-]
-$else
-$addButton[1;0;2;wyr2-votebutton;false;2️⃣]
-$addButton[1;0;2;wyr1-votebutton;false;1️⃣]
-$endif
+    const embed = new EmbedBuilder()
+      .setTitle("Would you rather...")
+      .addFields(
+        { name: "**Option 1**", value: String(data.option1 ?? "") },
+        { name: "**Option 2**", value: String(data.option2 ?? "") }
+      )
+      .setColor(ctx.getVar("embedcolor"));
 
-$createObject[api;$nonEscape[$get[jsonresponse]]]
-$onlyIf[$isValidObject[$nonEscape[$get[jsonresponse]]]==true;Unable to fetch data for wyr. Please, try again later.]
-$let[jsonresponse;$httpRequest[https://api.gamecord.xyz/wyr;GET;;;dead]]
-$cooldown[4s; Slow down! Don't spam the command!
-Time remaining: <t:$truncate[$divide[$sum[$getCooldownTime[4s;user;would-you-rather;$authorID];$dateStamp];1000]]:R>]
-`
-}
+    const useReactions = ctx.args.some(
+      (arg) => arg === "--usereactions" || arg === "—usereactions"
+    );
+
+    if (useReactions) {
+      const canReact =
+        !ctx.guild || ctx.channel.permissionsFor(ctx.client.user)?.has(PermissionFlagsBits.AddReactions);
+      if (!canReact) {
+        return ctx.send(
+          "I do not have permissions to add reactions to my message in this channel. Please either grant me `AddReactions` permission or use buttons instead."
+        );
+      }
+
+      const message = await ctx.send({ embeds: [embed] });
+      await message.react("1️⃣");
+      await message.react("2️⃣");
+      return;
+    }
+
+    await ctx.send({ embeds: [embed], components: [voteRow()] });
+  },
+};

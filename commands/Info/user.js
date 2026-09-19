@@ -1,33 +1,79 @@
-module.exports = {
-name: "user",
-info: {
-    description: "Returns your/user's information.",
-    perms: ["`SendMessages`"]
-},
-$if: "old",
-aliases: ["userinfo", "user-info"],
-code: `$title[Information for $get[username];$userURL[$get[user]]]
-$addField[**Other**;
-* **Avatar:** [link]($userAvatar[$get[user]])
-* **DMs:** $get[userdms]
-;true]
-$addField[**General**;
-* **Joined Discord on:** <t:$truncate[$divide[$creationDate[$get[user];ms];1000]]:f>
-* **Bot account:** $get[botchecker]
-* **ID:** $get[user]
-;true]
-$color[$getVar[embedcolor]]
-$thumbnail[$userAvatar[$get[user]]]
-$if[$memberExists[$findUser[$message[1;true]];$guildID]==true]
-$addButton[1;Member's Server info;2;memberservinfo_$authorID_$get[user];false]
-$addButton[1;General info;2;mainmeminfo_$authorID_$get[user];true]
-$endif
+"use strict";
 
-$let[username;$advancedReplaceText[$checkCondition[$hasUserTag[$get[user]]==false];true;$username[$get[user]];false;$userTag[$get[user]]]]
-$let[botchecker;$advancedReplaceText[$checkCondition[$isBot[$get[user]]==true];true;Yes;false;No]]
-$let[userdms;$advancedReplaceText[$checkCondition[$isUserDmEnabled[$get[user]]==true];true;Enabled;false;Disabled]]
-$let[user;$findUser[$message[1];true]]
-$cooldown[2s; Slow down! Don't spam the command!
-Time remaining: <t:$truncate[$divide[$sum[$getCooldownTime[2s;user;user;$authorID];$dateStamp];1000]]:R>]
-`
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
+const { resolveUser } = require("../../src/utils/resolve");
+
+async function isUserDmEnabled(user) {
+  try {
+    await user.send(" ");
+    return true;
+  } catch (error) {
+    return error?.code !== 50007;
+  }
 }
+
+module.exports = {
+  name: "user",
+  aliases: ["userinfo", "user-info"],
+  info: {
+    description: "Returns your/user's information.",
+    perms: ["`SendMessages`"],
+  },
+  cooldown: {
+    time: 2000,
+    message: "Slow down! Don't spam the command!\nTime remaining: %timestamp%",
+  },
+  async execute(ctx) {
+    const user = await resolveUser(ctx.client, ctx.arg(1), ctx.author);
+    const avatar = user.displayAvatarURL({ size: 4096, forceStatic: false });
+    const dmEnabled = await isUserDmEnabled(user);
+
+    const embed = new EmbedBuilder()
+      .setTitle(`Information for ${user.tag}`)
+      .setURL(`https://discord.com/users/${user.id}`)
+      .addFields(
+        {
+          name: "**Other**",
+          value: [
+            `* **Avatar:** [link](${avatar})`,
+            `* **DMs:** ${dmEnabled ? "Enabled" : "Disabled"}`,
+          ].join("\n"),
+          inline: true,
+        },
+        {
+          name: "**General**",
+          value: [
+            `* **Joined Discord on:** <t:${Math.trunc(user.createdTimestamp / 1000)}:f>`,
+            `* **Bot account:** ${user.bot ? "Yes" : "No"}`,
+            `* **ID:** ${user.id}`,
+          ].join("\n"),
+          inline: true,
+        }
+      )
+      .setColor(ctx.getVar("embedcolor"))
+      .setThumbnail(avatar);
+
+    const components = [];
+    if (ctx.guild) {
+      const member =
+        ctx.guild.members.cache.get(user.id) ??
+        (await ctx.guild.members.fetch(user.id).catch(() => null));
+      if (member) {
+        components.push(
+          new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setLabel("Member's Server info")
+              .setStyle(ButtonStyle.Secondary)
+              .setCustomId(`memberservinfo_${ctx.authorId}_${user.id}`),
+            new ButtonBuilder()
+              .setLabel("General info")
+              .setStyle(ButtonStyle.Secondary)
+              .setCustomId(`mainmeminfo_${ctx.authorId}_${user.id}`)
+          )
+        );
+      }
+    }
+
+    await ctx.send({ embeds: [embed], components });
+  },
+};

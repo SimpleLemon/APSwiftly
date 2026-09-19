@@ -1,139 +1,154 @@
-module.exports = [{
-    type: "interaction",
-    prototype: "button",
-    code: `$interactionReply[{newEmbed:{title:Flags of this command}{description:The following flags are available for this command#COLON#
+"use strict";
 
-$arrayJoin[flags;, ]
-    }{color:$getVar[embedcolor]}};all;true]
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
+const { autoListText } = require("../../../../src/services/autolist");
 
-$createArray[flags;$nonEscape[$get[flagschecker]]]
-$let[flagschecker;$advancedReplaceText[$nonEscape[$commandInfo[$get[cmdname];info.flags]];,;#SEMI#]]
+async function permissionsInfo(ctx, botId) {
+  const member = await ctx.guild.members.fetch(botId).catch(() => null);
+  if (!member) return { error: "This bot is no longer in this server." };
 
-$let[cmdname;$advancedTextSplit[$interactionData[customId];_;3]]
+  const perms = member.permissions.toArray();
+  if (!perms.length) return { error: "This bot does not seem to have any permissions added to it." };
 
-$onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-{ephemeral}
-{interaction}
-    ]
+  return { perms, name: member.user.username };
+}
 
-$onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==viewcommandflags;]
-`
-},{
-    type: "interaction",
-    prototype: "button",
-    code: `$interactionReply[{newEmbed:{title:Description}{description:This server's description reads#COLON#
+function compactDescription(botName, perms) {
+  return `**${botName}** has the following permissions:\n\n\`\`\`${perms.join(", ").toUpperCase()}\`\`\``;
+}
 
-$guildDescription
-    }{color:$getVar[embedcolor]}};all;true]
+function uncompactDescription(botName, perms) {
+  const list = perms.map((perm) => autoListText(perm.toUpperCase())).join("\n");
+  return `**${botName}** has the following permissions:\n\n\n${list}`;
+}
 
-$onlyIf[$guildDescription!=;
-No description has been found for this server.
-{ephemeral}
-{interaction}
-]
+function compactRow(botId) {
+  return new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setLabel("Uncompact")
+      .setStyle(ButtonStyle.Secondary)
+      .setCustomId(`permsuncompactbutton_${botId}`)
+  );
+}
 
+function uncompactRow(botId) {
+  return new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setLabel("Compact")
+      .setStyle(ButtonStyle.Secondary)
+      .setCustomId(`permscompactbutton_${botId}`)
+  );
+}
 
-$onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-{ephemeral}
-{interaction}
-    ]
+module.exports = [
+  {
+    component: "button",
+    customId: "viewcommandflags",
+    async execute(ctx) {
+      if (ctx.parts[1] !== ctx.authorId) {
+        return ctx.reply("This interaction is not for you.", { flags: 64 });
+      }
 
-$onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==viewserverdescription;]
-`
-},{
-    type: "interaction",
-    prototype: "button",
-    code: `$interactionReply[{newEmbed:{title:Permissions of this bot}{description:**$username[$get[botID]]** has the following permissions#COLON#
+      const def = ctx.client.registry.resolvePrefix(ctx.parts[2]);
+      const rawFlags = def?.info?.flags;
+      const flags = rawFlags ? (Array.isArray(rawFlags) ? rawFlags : [rawFlags]) : [];
 
-    \`\`\`$toLocaleUpperCase[$userPerms[$get[botID];, ;$guildID]]\`\`\`
-    }{color:$getVar[embedcolor]}}
+      const embed = new EmbedBuilder()
+        .setTitle("Flags of this command")
+        .setDescription(`The following flags are available for this command:\n\n${flags.join(", ")}`)
+        .setColor(ctx.getVar("embedcolor"));
 
-    {actionRow:{button:Uncompact:2:permsuncompactbutton_$get[botID]:false}};all;true]
+      await ctx.reply({ embeds: [embed] }, { flags: 64 });
+    },
+  },
+  {
+    component: "button",
+    customId: "viewserverdescription",
+    async execute(ctx) {
+      if (ctx.parts[1] !== ctx.authorId) {
+        return ctx.reply("This interaction is not for you.", { flags: 64 });
+      }
 
-$onlyIf[$userPerms[$get[botID];, ;$guildID]!=;
-This bot does not seem to have any permissions added to it.
-{ephemeral}
-{interaction}
-]
+      if (!ctx.guild?.description) {
+        return ctx.reply("No description has been found for this server.", { flags: 64 });
+      }
 
-$onlyIf[$memberExists[$get[botID];$guildID]==true;
-This bot is no longer in this server.
-{ephemeral}
-{interaction}
-]
+      const embed = new EmbedBuilder()
+        .setTitle("Description")
+        .setDescription(`This server's description reads:\n\n${ctx.guild.description}`)
+        .setColor(ctx.getVar("embedcolor"));
 
-$let[botID;$advancedTextSplit[$interactionData[customId];_;2]]
-$onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==viewbotpermsbutton;]
-`
-},{
-    type: "interaction",
-    prototype: "button",
-    code: `$interactionUpdate[{newEmbed:{title:Permissions of this bot}{description:**$username[$get[botID]]** has the following permissions#COLON#
+      await ctx.reply({ embeds: [embed] }, { flags: 64 });
+    },
+  },
+  {
+    component: "button",
+    customId: "viewbotpermsbutton",
+    async execute(ctx) {
+      const botId = ctx.parts[1];
+      const info = await permissionsInfo(ctx, botId);
+      if (info.error) return ctx.reply(info.error, { flags: 64 });
 
+      const embed = new EmbedBuilder()
+        .setTitle("Permissions of this bot")
+        .setDescription(compactDescription(info.name, info.perms))
+        .setColor(ctx.getVar("embedcolor"));
 
-    $autoList[$nonEscape[$get[permslist]];, ;autoListText]
-    }{color:$getVar[embedcolor]}}
+      await ctx.reply({ embeds: [embed], components: [compactRow(botId)] }, { flags: 64 });
+    },
+  },
+  {
+    component: "button",
+    customId: "permsuncompactbutton",
+    async execute(ctx) {
+      const botId = ctx.parts[1];
+      const info = await permissionsInfo(ctx, botId);
+      if (info.error) return ctx.reply(info.error, { flags: 64 });
 
-    {actionRow:{button:Compact:2:permscompactbutton_$get[botID]:false}}]
+      const embed = new EmbedBuilder()
+        .setTitle("Permissions of this bot")
+        .setDescription(uncompactDescription(info.name, info.perms))
+        .setColor(ctx.getVar("embedcolor"));
 
-$let[permslist;$toLocaleUpperCase[$userPerms[$get[botID];, ;$guildID]]]
+      await ctx.update({ embeds: [embed], components: [uncompactRow(botId)] });
+    },
+  },
+  {
+    component: "button",
+    customId: "permscompactbutton",
+    async execute(ctx) {
+      const botId = ctx.parts[1];
+      const info = await permissionsInfo(ctx, botId);
+      if (info.error) return ctx.reply(info.error, { flags: 64 });
 
-    $onlyIf[$userPerms[$get[botID];, ;$guildID]!=;
-    This bot does not seem to have any permissions added to it.
-    {ephemeral}
-    {interaction}
-    ]
+      const embed = new EmbedBuilder()
+        .setTitle("Permissions of this bot")
+        .setDescription(compactDescription(info.name, info.perms))
+        .setColor(ctx.getVar("embedcolor"));
 
-    $onlyIf[$memberExists[$get[botID];$guildID]==true;
-    This bot is no longer in this server.
-    {ephemeral}
-    {interaction}
-    ]
+      await ctx.update({ embeds: [embed], components: [compactRow(botId)] });
+    },
+  },
+  {
+    component: "button",
+    customId: "whynoadminperm",
+    async execute(ctx) {
+      if (ctx.parts[1] !== ctx.authorId) {
+        return ctx.reply("This interaction is not for you.", { flags: 64 });
+      }
 
-    $let[botID;$advancedTextSplit[$interactionData[customId];_;2]]
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==permsuncompactbutton;]
-    `
-},{
-    type: "interaction",
-    prototype: "button",
-    code: `$interactionUpdate[{newEmbed:{title:Permissions of this bot}{description:**$username[$get[botID]]** has the following permissions#COLON#
+      const embed = new EmbedBuilder()
+        .setTitle("Why this exists?")
+        .setDescription(
+          [
+            "Administrator permission is generally dangerous and should only be given to people you trust. It is always a good idea to only select the required permissions, which is why `perms` command exists to raise awareness about this.",
+            "",
+            "This is also to reduce the chances of raiding in case the bot gets hacked by having less dangerous permissions.",
+          ].join("\n")
+        )
+        .setColor(ctx.getVar("embedcolor"));
 
-
-    \`\`\`$toLocaleUpperCase[$userPerms[$get[botID];, ;$guildID]]\`\`\`
-    }{color:$getVar[embedcolor]}}
-
-    {actionRow:{button:Uncompact:2:permsuncompactbutton_$get[botID]:false}}]
-
-    $onlyIf[$userPerms[$get[botID];, ;$guildID]!=;
-    This bot does not seem to have any permissions added to it.
-    {ephemeral}
-    {interaction}
-    ]
-
-    $onlyIf[$memberExists[$get[botID];$guildID]==true;
-    This bot is no longer in this server.
-    {ephemeral}
-    {interaction}
-    ]
-
-    $let[botID;$advancedTextSplit[$interactionData[customId];_;2]]
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==permscompactbutton;]
-    `
-},{
-    type: "interaction",
-    prototype: "button",
-    code: `$interactionReply[{newEmbed:{title:Why this exists?}{description:Administrator permission is generally dangerous and should only be given to people you trust. It is always a good idea to only select the required permissions, which is why \`perms\` command exists to raise awareness about this.
-
-This is also to reduce the chances of raiding in case the bot gets hacked by having less dangerous permissions.
-    }{color:$getVar[embedcolor]}};all;true]
-
-
-$onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-{ephemeral}
-{interaction}
-    ]
-
-$onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==whynoadminperm;]
-`
-}]
-
+      await ctx.reply({ embeds: [embed] }, { flags: 64 });
+    },
+  },
+];

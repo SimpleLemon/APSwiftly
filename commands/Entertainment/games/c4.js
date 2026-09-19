@@ -1,40 +1,52 @@
-module.exports = {
-name: "connect4",
-info: {
-  description: "Start a connect4 match with your opponent.",
-  perms: ["`SendMessages`"]
-},
-aliases: ["c4", "connectfour"],
-code: `$djsEval[const { Connect4 } = require('discord-gamecord');
+"use strict";
 
-const Game = new Connect4({
-  message: message,
-  isSlashGame: false,
-  opponent: message.mentions.users.first(),
-  embed: {
-    title: 'Connect4 Game',
-    statusTitle: 'Status',
-    color: '$getVar[embedcolor]'
+const { Connect4 } = require("discord-gamecord");
+
+module.exports = {
+  name: "connect4",
+  aliases: ["c4", "connectfour"],
+  info: {
+    description: "Start a connect4 match with your opponent.",
+    perms: ["`SendMessages`"],
   },
-  emojis: {
-    board: '⚪',
-    player1: '🔴',
-    player2: '🟡'
+  cooldown: {
+    time: 3000,
+    message: "Slow down! Don't spam the command!\nTime remaining: %timestamp%",
   },
-  mentionUser: true,
-  timeoutTime: 60000,
-  buttonStyle: 'SECONDARY',
-  turnMessage: '{emoji} | Its turn of player **{player}**.',
-  winMessage: '{emoji} | **{player}** won the Connect4 Game.',
-  tieMessage: 'The Game tied! No one won the Game!',
-  timeoutMessage: 'The Game went unfinished! No one won the Game!',
-  playerOnlyMessage: 'Only {player} and {opponent} can use these buttons.'
-});
-Game.startGame();
-]
-$onlyIf[$isBot[$mentioned[1;true]]==false;You cannot play with bots!]
-$onlyIf[$mentioned[1;true]!=$authorID;Please mention a opponent to play with!]
-$cooldown[3s;Slow down! Don't spam the command!
-Time remaining: <t:$truncate[$divide[$sum[$getCooldownTime[3s;user;connect4;$authorID];$dateStamp];1000]]:R>]
-`
-}
+  async execute(ctx) {
+    const opponent = ctx.mentioned;
+
+    if (!opponent || opponent.id === ctx.authorId) {
+      return ctx.send("Please mention a opponent to play with!");
+    }
+    if (opponent.bot) {
+      return ctx.send("You cannot play with bots!");
+    }
+
+    const game = new Connect4({
+      message: ctx.message,
+      isSlashGame: false,
+      opponent,
+      embed: {
+        title: "Connect4 Game",
+        statusTitle: "Status",
+        color: ctx.getVar("embedcolor"),
+      },
+      emojis: {
+        board: "⚪",
+        player1: "🔴",
+        player2: "🟡",
+      },
+      mentionUser: true,
+      timeoutTime: 60000,
+      buttonStyle: "SECONDARY",
+      turnMessage: "{emoji} | Its turn of player **{player}**.",
+      winMessage: "{emoji} | **{player}** won the Connect4 Game.",
+      tieMessage: "The Game tied! No one won the Game!",
+      timeoutMessage: "The Game went unfinished! No one won the Game!",
+      playerOnlyMessage: "Only {player} and {opponent} can use these buttons.",
+    });
+
+    await game.startGame();
+  },
+};

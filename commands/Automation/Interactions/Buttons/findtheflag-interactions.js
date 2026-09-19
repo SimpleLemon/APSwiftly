@@ -1,75 +1,75 @@
-module.exports = [{
-    name: "ftfresults1",
-    type:"interaction",
-    prototype: "button",
-    $if: "old",
-    code:`
-$if[$random[1;100]>=38&&$random[1;100]<89]
-$interactionFollowUp[{newEmbed:{title:You found the flag!}{description:Nice guess, the flag was on zone 1! 🏳️}{color:DarkGreen}}]
+"use strict";
 
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
+const { pick, randomInt } = require("../../../../src/utils/random");
 
-$interactionUpdate[{newEmbed:{title:$get[embedtitle]}{description:$get[embeddescription]}{color:$getVar[embedcolor]}}{actionRow:{button::3:ftf1:true:🏳️}{button::2:ftf2:true:2️⃣}{button::2:ftf3:true:3️⃣}}]
+function gameRow(styles, emojis) {
+  return new ActionRowBuilder().addComponents(
+    new ButtonBuilder().setCustomId("ftf1").setEmoji(emojis[0]).setStyle(styles[0]).setDisabled(true),
+    new ButtonBuilder().setCustomId("ftf2").setEmoji(emojis[1]).setStyle(styles[1]).setDisabled(true),
+    new ButtonBuilder().setCustomId("ftf3").setEmoji(emojis[2]).setStyle(styles[2]).setDisabled(true)
+  );
+}
 
-$else
-$interactionFollowUp[{newEmbed:{title:Aww.. miss!}{description:Wrong guess... the flag was on zone $randomText[2;3]. 🏴}{color:Red}}]
+function originalEmbed(ctx) {
+  const embed = ctx.message.embeds[0];
+  return new EmbedBuilder()
+    .setTitle(embed?.title ?? "")
+    .setDescription(embed?.description ?? "")
+    .setColor(ctx.getVar("embedcolor"));
+}
 
-$interactionUpdate[{newEmbed:{title:$get[embedtitle]}{description:$get[embeddescription]}{color:$getVar[embedcolor]}}{actionRow:{button::4:ftf1:true:1️⃣}{button::2:ftf2:true:2️⃣}{button::2:ftf3:true:3️⃣}}]
+function didWin() {
+  return randomInt(1, 100) >= 38 && randomInt(1, 100) < 89;
+}
 
-$endif
+async function pickZone(ctx, zone) {
+  const win = didWin();
+  const styles = [ButtonStyle.Secondary, ButtonStyle.Secondary, ButtonStyle.Secondary];
+  const emojis = ["1️⃣", "2️⃣", "3️⃣"];
+  let followUp;
 
+  if (win) {
+    styles[zone - 1] = ButtonStyle.Success;
+    emojis[zone - 1] = "🏳️";
+    followUp = new EmbedBuilder()
+      .setTitle("You found the flag!")
+      .setDescription(`Nice guess, the flag was on zone ${zone}! 🏳️`)
+      .setColor("DarkGreen");
+  } else {
+    styles[zone - 1] = ButtonStyle.Danger;
+    const zones = { 1: ["2", "3"], 2: ["1", "3"], 3: ["1", "2"] };
+    const actual = pick(zones[zone]);
+    followUp = new EmbedBuilder()
+      .setTitle("Aww.. miss!")
+      .setDescription(`Wrong guess... the flag was on zone ${actual}. 🏴`)
+      .setColor("Red");
+  }
 
-$let[embeddescription;$getEmbed[$channelID;$interactionData[message.id];1;description]]
-$let[embedtitle;$getEmbed[$channelID;$interactionData[message.id];1;title]]
+  await ctx.update({ embeds: [originalEmbed(ctx)], components: [gameRow(styles, emojis)] });
+  await ctx.followUp({ embeds: [followUp] });
+}
 
-`
-},{
-     name: "ftfresults2",
-    type:"interaction",
-    prototype: "button",
-    $if: "old",
-    code:`
-$if[$random[1;100]>=38&&$random[1;100]<89]
-
-$interactionFollowup[{newEmbed:{title:You found the flag!}{description:Nice guess, the flag was on zone 2! 🏳️}{color:DarkGreen}}]
-
-$interactionUpdate[{newEmbed:{title:$get[embedtitle]}{description:$get[embeddescription]}{color:$getVar[embedcolor]}}{actionRow:{button::2:ftf1:true:1️⃣}{button::3:ftf2:true:🏳️}{button::2:ftf3:true:3️⃣}}]
-
-$else
-
-$interactionFollowup[{newEmbed:{title:Aww.. miss!}{description:Wrong guess... the flag was on zone $randomText[1;3]. 🏴}{color:Red}}]
-
-$interactionUpdate[{newEmbed:{title:$get[embedtitle]}{description:$get[embeddescription]}{color:$getVar[embedcolor]}}{actionRow:{button::2:ftf1:true:1️⃣}{button::4:ftf2:true:2️⃣}{button::2:ftf3:true:3️⃣}}]
-
-
-$endif
-
-$let[embeddescription;$getEmbed[$channelID;$interactionData[message.id];1;description]]
-$let[embedtitle;$getEmbed[$channelID;$interactionData[message.id];1;title]]
-`
-},{
-    name: "ftfresults3",
-    type:"interaction",
-    prototype: "button",
-    $if: "old",
-    code:`
-$if[$random[1;100]>=38&&$random[1;100]<89]
-
-$interactionFollowup[{newEmbed:{title:You found the flag!}{description:Nice guess, the flag was on zone 3! 🏳️}{color:DarkGreen}}]
-
-$interactionUpdate[{newEmbed:{title:$get[embedtitle]}{description:$get[embeddescription]}{color:$getVar[embedcolor]}}{actionRow:{button::2:ftf1:true:1️⃣}{button::2:ftf2:true:2️⃣}{button::3:ftf3:true:🏳️}}]
-
-$else
-
-$interactionFollowup[{newEmbed:{title:Aww.. miss!}{description:Wrong guess... the flag was on zone $randomText[1;2]. 🏴}{color:Red}}]
-
-$interactionUpdate[{newEmbed:{title:$get[embedtitle]}{description:$get[embeddescription]}{color:$getVar[embedcolor]}}{actionRow:{button::2:ftf1:true:1️⃣}{button::2:ftf2:true:2️⃣}{button::4:ftf3:true:3️⃣}}]
-
-
-$endif
-
-$let[embeddescription;$getEmbed[$channelID;$interactionData[message.id];1;description]]
-$let[embedtitle;$getEmbed[$channelID;$interactionData[message.id];1;title]]
-
- 
- `
-}]
+module.exports = [
+  {
+    component: "button",
+    customId: "ftf1",
+    async execute(ctx) {
+      await pickZone(ctx, 1);
+    },
+  },
+  {
+    component: "button",
+    customId: "ftf2",
+    async execute(ctx) {
+      await pickZone(ctx, 2);
+    },
+  },
+  {
+    component: "button",
+    customId: "ftf3",
+    async execute(ctx) {
+      await pickZone(ctx, 3);
+    },
+  },
+];

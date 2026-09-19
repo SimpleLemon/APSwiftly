@@ -1,14 +1,17 @@
 {
   "name": "APSwiftly",
-  "version": "2.2.2-build.2196",
-  "description": "A bot made in aoi.js v6 built for APStudy.",
+  "version": "3.0.0-build.2196",
+  "description": "APStudy's official Discord bot, built with discord.js v14 and SQLite.",
   "main": "index.js",
   "homepage": "https://apstudy.org/",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --test test/*.test.js",
     "setup": "npm install",
     "start": "node index.js",
-    "startWithoutDeprecation": "node index.js -- --no-deprecation",
+    "startWithoutDeprecation": "node --no-deprecation index.js",
+    "validate": "APSWIFTLY_VALIDATION=1 node index.js",
+    "migrate:aoi": "node migration/migrate-aoi-to-sqlite.js",
+    "register:slash": "node migration/register-slash.js",
     "UpdateandStart": "git pull && node index.js"
   },
   "engines": {
@@ -18,11 +21,11 @@
   "author": "dodoGames",
   "license": "Apache-2.0",
   "dependencies": {
-    "aoi.js": "^6.9.0",
-    "@aoijs/aoi.db": "^0.0.0",
-    "discord-gamecord": "^4.4.2",
-    "dotenv": "^16.4.7",
     "axios": "^1.6.7",
+    "better-sqlite3": "^12.11.1",
+    "discord-gamecord": "^4.4.2",
+    "discord.js": "14.20.0",
+    "dotenv": "^16.4.7",
     "sharp": "^0.33.2"
   },
   "devDependencies": {

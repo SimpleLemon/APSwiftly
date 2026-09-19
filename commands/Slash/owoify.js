@@ -1,15 +1,16 @@
-module.exports = {
-name: "owoify",
-type: "interaction",
-prototype: "slash",
-info: {
- description: "Makes text OWOifed.",
-},
-code: `$interactionReply[$owoify[$slashOption[text]];users;true]
+"use strict";
 
-$onlyIf[$getVar[userapps]==true;User apps are currently unavailable.
-{ephemeral}
-{interaction}
-]
-`
-}
+module.exports = {
+  slash: { name: "owoify" },
+  info: {
+    description: "Makes text OWOifed.",
+  },
+  async execute(ctx) {
+
+    const text = ctx.options.getString("text");
+    await ctx.reply(
+      { content: ctx.helpers.owoify(text), allowedMentions: { parse: ["users"] } },
+      { flags: 64 }
+    );
+  },
+};

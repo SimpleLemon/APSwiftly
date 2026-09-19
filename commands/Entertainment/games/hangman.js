@@ -1,48 +1,87 @@
-module.exports = [{
-name: "hangman",
-info: {
-    description: "Starts a hangman game (pass the flag \`--themes\` to change the current theme).",
+"use strict";
+
+const { ActionRowBuilder, EmbedBuilder, StringSelectMenuBuilder } = require("discord.js");
+const { Hangman } = require("discord-gamecord");
+
+const HANGMAN_THEMES = [
+  { label: "Nature", description: "Sets the theme to Nature-related", value: "nature" },
+  { label: "Sport", description: "Sets the theme to Sport-related", value: "sport" },
+  { label: "Color", description: "Sets the theme to Color-related", value: "color" },
+  { label: "Camp", description: "Sets the theme to Camp-related", value: "camp" },
+  { label: "Fruit", description: "Sets the theme to Fruit-related", value: "fruit" },
+  { label: "Discord", description: "Sets the theme to Discord-related", value: "discord" },
+  { label: "Winter", description: "Sets the theme to Winter-related", value: "winter" },
+  { label: "Pokemon", description: "Sets the theme to Pokemon-related", value: "pokemon" },
+];
+
+function toUpper(value) {
+  return String(value ?? "").toLocaleUpperCase();
+}
+
+function settingsRow(authorId) {
+  return new ActionRowBuilder().addComponents(
+    new StringSelectMenuBuilder()
+      .setCustomId(`hangmansettings_${authorId}`)
+      .setPlaceholder("Select a theme")
+      .setMinValues(1)
+      .setMaxValues(1)
+      .addOptions(HANGMAN_THEMES)
+  );
+}
+
+async function startHangman(ctx) {
+  const game = new Hangman({
+    message: ctx.message,
+    isSlashGame: false,
+    embed: {
+      title: "Hangman",
+      color: ctx.getVar("embedcolor"),
+    },
+    hangman: { hat: "🎩", head: "😟", shirt: "👕", pants: "🩳", boots: "👞👞" },
+    customWord: null,
+    timeoutTime: 60000,
+    theme: ctx.getGlobalUserVar(ctx.authorId, "hangman_theme", "main"),
+    winMessage: "You won! The word was {word}.",
+    loseMessage: "You lost! The word was {word}.",
+    playerOnlyMessage: "Only {player} can use these buttons.",
+  });
+
+  await game.startGame();
+}
+
+async function showHangmanSettings(ctx) {
+  const embed = new EmbedBuilder()
+    .setTitle("Hangman Themes")
+    .setDescription("Welcome to Hangman Themes! To select a theme to use, use the dropdown menu below!")
+    .addFields({
+      name: "**Current theme**",
+      value: `* \`${toUpper(ctx.getGlobalUserVar(ctx.authorId, "hangman_theme", "main"))}\``,
+    })
+    .setColor(ctx.getVar("embedcolor"));
+
+  await ctx.send({ embeds: [embed], components: [settingsRow(ctx.authorId)] });
+}
+
+module.exports = {
+  name: "hangman",
+  aliases: "hm",
+  info: {
+    description: "Starts a hangman game (pass the flag `--themes` to change the current theme).",
     perms: ["`SendMessages`"],
-    flags: ["`--themes`", "`--settings` (alias)"]
+    flags: ["`--themes`", "`--settings` (alias)"],
   },
-aliases: "hm",
-code: `$ifAwaited[$checkContains[$message;--themes;—themes;--settings;—settings]==true;{execute:hangmansettings};{execute:hangmanstart}]
-
-$cooldown[4s; Slow down! Don't spam the command!
-Time remaining: <t:$truncate[$divide[$sum[$getCooldownTime[4s;user;hangman;$authorID];$dateStamp];1000]]:R>]
-`
-},{
-    name: "hangmanstart",
-    type: "awaited",
-    code: `
-    $djsEval[const { Hangman } = require('discord-gamecord');
-
-const Game = new Hangman({
-  message: message,
-  isSlashGame: false,
-  embed: {
-    title: 'Hangman',
-    color: '$getVar[embedcolor]'
+  cooldown: {
+    time: 4000,
+    message: "Slow down! Don't spam the command!\nTime remaining: %timestamp%",
   },
-  hangman: { hat: '🎩', head: '😟', shirt: '👕', pants: '🩳', boots: '👞👞' },
-  customWord: null,
-  timeoutTime: 60000,
-  theme: '$getGlobalUserVar[hangman_theme]',
-  winMessage: 'You won! The word was {word}.',
-  loseMessage: 'You lost! The word was {word}.',
-  playerOnlyMessage: 'Only {player} can use these buttons.'
-});
-
-Game.startGame();
-]`
-},{
-  name: "hangmansettings",
-  type: "awaited",
-  code: `$title[Hangman Themes]
-$description[Welcome to Hangman Themes! To select a theme to use, use the dropdown menu below!]
-$addField[**Current theme**;
-* \`$toLocaleUpperCase[$getGlobalUserVar[hangman_theme]]\`
-]
-$color[$getVar[embedcolor]]
-$addSelectMenu[1;string;hangmansettings_$authorID;Select a theme;1;1;false;Nature:Sets the theme to Nature-related:nature:false;Sport:Sets the theme to Sport-related:sport:false;Color:Sets the theme to Color-related:color:false;Camp:Sets the theme to Camp-related:camp:false;Fruit:Sets the theme to Fruit-related:fruit:false;Discord:Sets the theme to Discord-related:discord:false;Winter:Sets the theme to Winter-related:winter:false;Pokemon:Sets the theme to Pokemon-related:pokemon:false]`
-}]
+  async execute(ctx) {
+    const settings = ctx.args.some(
+      (arg) =>
+        arg === "--themes" ||
+        arg === "—themes" ||
+        arg === "--settings" ||
+        arg === "—settings"
+    );
+    return settings ? showHangmanSettings(ctx) : startHangman(ctx);
+  },
+};

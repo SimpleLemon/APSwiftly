@@ -1,22 +1,26 @@
+"use strict";
+
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
+
 module.exports = {
-name: "avatar",
-type: "interaction",
-prototype: "slash",
-info: {
- description: "Returns your/users profile picture."
-},
-code: `$interactionReply[{newEmbed:{title:$get[username]'s Avatar}{image:$userAvatar[$get[user]]}{color:$getVar[embedcolor]}}
+  slash: { name: "avatar" },
+  info: {
+    description: "Returns your/users profile picture.",
+  },
+  async execute(ctx) {
 
-{actionRow:{button:Download:5:$nonEscape[$userAvatar[$get[user]]]:false}};all;true]
+    const user = ctx.options.getUser("user") ?? ctx.author;
+    const url = user.displayAvatarURL({ extension: "png", size: 4096 });
 
-$let[username;$advancedReplaceText[$checkCondition[$hasUserTag[$get[user]]==false];true;$username[$get[user]];false;$userTag[$get[user]]]]
-$let[user;$advancedReplaceText[$checkCondition[$slashOption[user]==];true;$authorID;false;$slashOption[user]]]
+    const embed = new EmbedBuilder()
+      .setTitle(`${user.username}'s Avatar`)
+      .setImage(url)
+      .setColor(ctx.getVar("embedcolor"));
 
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder().setLabel("Download").setStyle(ButtonStyle.Link).setURL(url)
+    );
 
-
-$onlyIf[$getVar[userapps]==true;User apps are currently disabled.
-{ephemeral}
-{interaction}
-]
-`
-}
+    await ctx.reply({ embeds: [embed], components: [row] }, { flags: 64 });
+  },
+};

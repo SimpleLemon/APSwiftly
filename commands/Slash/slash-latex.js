@@ -1,21 +1,15 @@
-module.exports = {
-	name: "latex",
-    type: "interaction",
-    prototype: "slash",
-    info: {
-    description: "Send LaTeX message through image attachment."
-    },
-	code:`
-$renderMath[$slashOption[latex]]
-$interactionReply[Sent your LaTeX message!]
-`
-}
+"use strict";
 
-// $createApplicationCommand[global;latex;Send LaTeX message through image attachment.;false;guild,user;guild,botdm,dm;slash;[
-//   {
-//     "type": 3,
-//     "name": "latex",
-//     "description": "LaTeX message to send",
-//     "required": true
-//   }
-// ]]
+module.exports = {
+  slash: { name: "latex" },
+  info: {
+    description: "Send LaTeX message through image attachment.",
+  },
+  async execute(ctx) {
+    const expression = ctx.options.getString("latex");
+    await ctx.defer({ flags: 64 });
+
+    await ctx.client.services.renderMath(ctx.channel, { expression, author: ctx.author });
+    await ctx.reply("Sent your LaTeX message!");
+  },
+};

@@ -1,22 +1,29 @@
-const config = require("../config.json");
+"use strict";
 
-module.exports = {
-  "main": { // This is "table" name, tables can be managed by checking index.js under "tables:" option
+const { config } = require("../config");
+
+/**
+ * Default values for registered variables, mirroring the old
+ * handlers/variables.js seeds. They are NOT written into SQLite on boot;
+ * lookups fall back to these values when no record exists, exactly like
+ * aoi.js kept its variable defaults in memory.
+ */
+const mainDefaults = {
   // Game variables
   trivia_type: "multiple",
   trivia_difficulty: "medium",
   flood_difficulty: 13,
-  wyr: {upvotes: 0, downvotes: 0},
+  wyr: { upvotes: 0, downvotes: 0 },
   hangman_theme: "nature",
   // Main variables (do not touch)
   autopingreply: "off",
   includebots: "on",
-  version: "2.2.2",
+  version: require("../../package.json").version,
   versionCodename: "Electric",
   libraryversiondevcheck: "off",
   buildStatus: "Complete",
   buildDate: "1736720758981",
-  buildBranch: "v2",
+  buildBranch: "v3",
   buildRevision: "0",
   showbuildinfo: "off",
   buildNumber: "2196",
@@ -75,13 +82,47 @@ module.exports = {
   servermemberrequirement: "0",
   userapps: config.EnableUserApps,
   isuserappsalreadysetup: "no",
-  errorsdisabled: config.DisableAllErrors
-  },
-  "custom": { 
+  errorsdisabled: config.DisableAllErrors,
+};
+
+const customDefaults = {
   hours: "0",
   checkinid: "",
   checkintimeoutid: "",
   channelid: "",
   useraitokenusage: "",
-  }
+};
+
+const defaults = {
+  main: mainDefaults,
+  custom: customDefaults,
+};
+
+function getDefault(table, name) {
+  const scoped = defaults[table];
+  if (!scoped) return undefined;
+  return scoped[name];
 }
+
+function hasDefault(table, name) {
+  return Boolean(defaults[table] && Object.prototype.hasOwnProperty.call(defaults[table], name));
+}
+
+/** Mirrors aoi.js VariableManager.parseData value coercion. */
+function parseByType(value, defaultValue) {
+  if (typeof defaultValue === "number") {
+    const num = Number(value);
+    return Number.isNaN(num) ? value : num;
+  }
+  if (defaultValue !== null && typeof defaultValue === "object") {
+    if (typeof value === "object") return value;
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value;
+    }
+  }
+  return value;
+}
+
+module.exports = { defaults, mainDefaults, customDefaults, getDefault, hasDefault, parseByType };

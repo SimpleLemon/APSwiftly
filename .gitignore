@@ -23,7 +23,6 @@ lerna-debug.log*
 
 # Main stuff to ignore
 database/
-package-lock.json
 yarn.lock
 config.json
 node_modules/
@@ -34,3 +33,10 @@ node_modules/
 APSWIFTLY_DB_CONTEXT.md
 VPS_CONTEXT.md
 
+
+# Local migration artifacts (production snapshots, exports, reports)
+.migration/
+
+# Local OS metadata and generated caches
+.DS_Store
+.cache/

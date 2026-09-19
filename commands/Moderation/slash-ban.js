@@ -1,60 +1,117 @@
-module.exports = {
-name: "ban",
-type: "interaction",
-prototype: "slash",
-$if: "old",
-info: {
-    description: "Ban User",
-    perms: ["`banmembers,sendmessages`"]
-	},
-code:`
-$if[$isUserDmEnabled[$slashOption[user]]==true]
-$interactionReply[{ephemeral}{interaction}{newEmbed:{description:<#COLON#Checkmark#COLON#1370802219900735658> **$username[$slashOption[user]] has been banned.**}{footer:User was sent a DM message}{color:00FF00}}]
-$ban[$guildID;$slashOption[user];$replaceText[$if[$slashOption[preserve_messages]==;false] 7 $else 0 $endif;;];By $username[$authorID] for $replaceText[$if[$slashOption[reason]==;] No Reason Given $else $slashOption[reason] $endif;;]]
-$sendDm[{newEmbed:{title:Banned}{description:You have been **banned** from $guildName.
-Reason#COLON# $replaceText[$if[$slashOption[reason]==] No Reason Given $else $slashOption[reason] $endif;;]}{color:White}}
-{actionRow:{button:Don't reply \— bot can't read.:secondary:unimportantcustomid2:true}{button:Appeal:link:https\\:dyno.gg/form/a704d734:false}};$slashOption[user]]
-$else
-$interactionReply[{ephemeral}{interaction}{newEmbed:{description:<#COLON#Checkmark#COLON#1370802219900735658> **$username[$slashOption[user]] has been banned.**}{footer:User was not sent a DM message}{color:00FF00}}]
-$ban[$guildID;$slashOption[user];$replaceText[$if[$slashOption[preserve_messages]==false;true] 7 $else 0 $endif;;];By $username[$authorID] for $replaceText[$if[$slashOption[reason]==;] No Reason Given $else $slashOption[reason] $endif;;]]
-$endif
+"use strict";
 
-$onlyIf[$rolePosition[$userHighestRole[$authorID]]<$rolePosition[$userHighestRole[$slashOption[user]]];{ephemeral}{interaction}{newEmbed:{title:<:Cross:1346672729675403437> Missing Permissions}{color:FF0000}{description:The user you are trying to ban has a higher role position!}}]
-$onlyIf[$rolePosition[$userHighestRole[$clientID]]<$rolePosition[$userHighestRole[$slashOption[user]]];{ephemeral}{interaction}{newEmbed:{title:<:Cross:1346672729675403437> Missing Permissions}{color:FF0000}{description:I do not have a high enough role position to ban this user!}}]
-$onlyIf[$guildOwnerID!=$slashOption[user];{ephemeral}{interaction}{newEmbed:{title:<:Cross:1346672729675403437> Missing Permissions}{color:FF0000}{description:The user you are trying to ban is the server owner!}}]
-$onlyIf[$slashOption[user]!=$authorID;<:Cross:1346672729675403437> You can't ban yourself genius.
-{ephemeral}
-{interaction}]
-$onlyIf[$hasPerms[$guildID;$authorID;banmembers]==true;{interaction}{newEmbed:{title:<:Cross:1346672729675403437> Missing Permissions}{color:FF0000}{description:You don't have \`ban\` permissions required to use this command!}}]
-`
+const {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder,
+  PermissionFlagsBits,
+} = require("discord.js");
+
+const CHECKMARK = "<:Checkmark:1370802219900735658>";
+const CROSS = "<:Cross:1346672729675403437>";
+
+function missingPermissionsEmbed(description) {
+  return new EmbedBuilder()
+    .setTitle(`${CROSS} Missing Permissions`)
+    .setColor("#FF0000")
+    .setDescription(description);
 }
 
-// $createApplicationCommand[global;ban;Ban a member;BanMembers;guild;guild;slash;[
-//   {
-//     "type": 6,
-//     "name": "user",
-//     "description": "User to ban",
-//     "required": true
-//   },
-//   {
-//     "type": 3,
-//     "name": "reason",
-//     "description": "Reason for ban"
-//   },
-//   {
-//     "type": 3,
-//     "name": "preserve_messages",
-//     "description": "Preserve user messages or not",
-//     "autocomplete": true,
-//     "choices": [
-//       {
-//         "name": "True",
-//         "value": "true"
-//       },
-//       {
-//         "name": "False",
-//         "value": "false"
-//       }
-//     ]
-//   }
-// ]]
+async function sendDirectMessage(client, userId, payload) {
+  try {
+    const user = await client.users.fetch(userId);
+    await user.send(payload);
+    return true;
+  } catch (error) {
+    if (error?.code === 50007) return false;
+    return false;
+  }
+}
+
+module.exports = {
+  slash: { name: "ban" },
+  info: {
+    description: "Ban User",
+    perms: ["`banmembers,sendmessages`"],
+  },
+  async execute(ctx) {
+    const target = ctx.options.getUser("user");
+    const reason = ctx.options.getString("reason") || "No Reason Given";
+    const preserveMessages = ctx.options.getString("preserve_messages");
+
+    if (target.id === ctx.authorId) {
+      return ctx.reply(`${CROSS} You can't ban yourself genius.`, { flags: 64 });
+    }
+
+    if (target.id === ctx.guild.ownerId) {
+      return ctx.reply(
+        { embeds: [missingPermissionsEmbed("The user you are trying to ban is the server owner!")] },
+        { flags: 64 }
+      );
+    }
+
+    await ctx.defer({ flags: 64 });
+
+    const targetMember = await ctx.guild.members.fetch(target.id).catch(() => null);
+    if (targetMember) {
+      const authorPosition = ctx.member?.roles?.highest?.position ?? 0;
+      const botPosition = ctx.guild.members.me?.roles?.highest?.position ?? 0;
+      const targetPosition = targetMember.roles.highest.position;
+
+      if (authorPosition <= targetPosition) {
+        return ctx.reply(
+          { embeds: [missingPermissionsEmbed("The user you are trying to ban has a higher role position!")] },
+          { flags: 64 }
+        );
+      }
+
+      if (botPosition <= targetPosition) {
+        return ctx.reply(
+          { embeds: [missingPermissionsEmbed("I do not have a high enough role position to ban this user!")] },
+          { flags: 64 }
+        );
+      }
+    }
+
+    if (!ctx.member?.permissions?.has(PermissionFlagsBits.BanMembers)) {
+      return ctx.reply({
+        embeds: [missingPermissionsEmbed("You don't have `ban` permissions required to use this command!")],
+      });
+    }
+
+    const dmEmbed = new EmbedBuilder()
+      .setTitle("Banned")
+      .setColor("#FFFFFF")
+      .setDescription(`You have been **banned** from ${ctx.guild.name}.\nReason: ${reason}`);
+
+    const dmSent = await sendDirectMessage(ctx.client, target.id, {
+      embeds: [dmEmbed],
+      components: [
+        new ActionRowBuilder().addComponents(
+          new ButtonBuilder()
+            .setLabel("Don't reply — bot can't read.")
+            .setStyle(ButtonStyle.Secondary)
+            .setCustomId("unimportantcustomid2")
+            .setDisabled(true),
+          new ButtonBuilder()
+            .setLabel("Appeal")
+            .setStyle(ButtonStyle.Link)
+            .setURL("https://dyno.gg/form/a704d734")
+        ),
+      ],
+    });
+
+    await ctx.guild.members.ban(target.id, {
+      deleteMessageSeconds: preserveMessages === "true" ? 0 : 604800,
+      reason: `By ${ctx.author.username} for ${reason}`,
+    });
+
+    const embed = new EmbedBuilder()
+      .setDescription(`${CHECKMARK} **${target.username} has been banned.**`)
+      .setFooter({ text: dmSent ? "User was sent a DM message" : "User was not sent a DM message" })
+      .setColor("#00FF00");
+
+    await ctx.reply({ embeds: [embed] }, { flags: 64 });
+  },
+};

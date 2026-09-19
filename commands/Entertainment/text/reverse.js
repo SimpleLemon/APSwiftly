@@ -1,15 +1,25 @@
+"use strict";
+
+const { httpJson } = require("../../../src/utils/http");
+
 module.exports = {
-    name: "reverse",
-    info: {
-        description: "Reverse some text.",
-        perms: ["`SendMessages`"]
-    },
-    code: `$getObjectProperty[api;text]
-$createObject[api;$nonEscape[$get[jsonresponse]]]
-$onlyIf[$isValidObject[$nonEscape[$get[jsonresponse]]]==true;Unable to generate the output. Please, try again later.]
-$let[jsonresponse;$httpRequest[https://api.popcat.xyz/reverse?text=$uri[$message;encode];GET;;;dead]]
-$onlyIf[$message!=;Please enter a text.]
-$cooldown[3s; Slow down! Don't spam the command!
-Time remaining: <t:$truncate[$divide[$sum[$getCooldownTime[3s;user;reverse;$authorID];$dateStamp];1000]]:R>]
-$disableMentionType[all]`
+  name: "reverse",
+  info: {
+    description: "Reverse some text.",
+    perms: ["`SendMessages`"],
+  },
+  cooldown: {
+    time: 3000,
+    message: "Slow down! Don't spam the command!\nTime remaining: %timestamp%",
+  },
+  async execute(ctx) {
+    if (ctx.rawArgs.length === 0) return ctx.send("Please enter a text.");
+
+    const data = await httpJson(`https://api.popcat.xyz/reverse?text=${encodeURIComponent(ctx.rawArgs)}`);
+    if (!data || typeof data !== "object") {
+      return ctx.send("Unable to generate the output. Please, try again later.");
     }
+
+    await ctx.send({ content: String(data.text ?? ""), allowedMentions: { parse: [] } });
+  },
+};

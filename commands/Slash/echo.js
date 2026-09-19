@@ -1,15 +1,13 @@
-module.exports = {
-name: "echo",
-type: "interaction",
-prototype: "slash",
-info: {
- description: "Echos message that you send."
-},
-code: `$interactionReply[$message;users;false]
+"use strict";
 
-$onlyIf[$getVar[userapps]==true;User apps are currently disabled.
-{ephemeral}
-{interaction}
-]
-`
-}
+module.exports = {
+  slash: { name: "echo" },
+  info: {
+    description: "Echos message that you send.",
+  },
+  async execute(ctx) {
+
+    const message = ctx.options.getString("message");
+    await ctx.reply({ content: message, allowedMentions: { parse: ["users"] } });
+  },
+};

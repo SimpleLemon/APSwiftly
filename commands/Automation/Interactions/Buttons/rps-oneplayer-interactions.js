@@ -1,48 +1,78 @@
-module.exports = [{
-    name: "rpsgameresults1",
-    type:"interaction",
-    prototype: "button",
-    code:`
-$interactionFollowUp[{newEmbed:{title:Results!}{description:You choose Rock 🌑! I choose $get[botselection]!}{color:Yellow}}]
+"use strict";
 
-$interactionUpdate[{newEmbed:{title:$get[embedtitle]}{description:$get[embeddescription]}{color:$getVar[embedcolor]}}{actionRow:{button:Rock:2:rpsrockbutton:true:🌑}{button:Paper:2:rpspaperbutton:true:📰}{button:Scissors:2:rpsscissorsbutton:true:✂️}}]
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
+const { pick } = require("../../../../src/utils/random");
 
+const CHOICES = {
+  rpsrockbutton: { text: "Rock 🌑" },
+  rpspaperbutton: { text: "Paper 📰" },
+  rpsscissorsbutton: { text: "Scissors ✂️" },
+};
 
-$let[botselection;$randomText[Rock 🌑;Paper 📰;Scissors ✂️]]
-$let[embeddescription;$getEmbed[$channelID;$interactionData[message.id];1;description]]
-$let[embedtitle;$getEmbed[$channelID;$interactionData[message.id];1;title]]
+function gameRow() {
+  return new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId("rpsrockbutton")
+      .setLabel("Rock")
+      .setStyle(ButtonStyle.Secondary)
+      .setEmoji("🌑")
+      .setDisabled(true),
+    new ButtonBuilder()
+      .setCustomId("rpspaperbutton")
+      .setLabel("Paper")
+      .setStyle(ButtonStyle.Secondary)
+      .setEmoji("📰")
+      .setDisabled(true),
+    new ButtonBuilder()
+      .setCustomId("rpsscissorsbutton")
+      .setLabel("Scissors")
+      .setStyle(ButtonStyle.Secondary)
+      .setEmoji("✂️")
+      .setDisabled(true)
+  );
+}
 
-`
-},{
-     name: "rpsgameresults2",
-    type:"interaction",
-    prototype: "button",
-    code:`
+function originalEmbed(ctx) {
+  const embed = ctx.message.embeds[0];
+  return new EmbedBuilder()
+    .setTitle(embed?.title ?? "")
+    .setDescription(embed?.description ?? "")
+    .setColor(ctx.getVar("embedcolor"));
+}
 
-$interactionFollowup[{newEmbed:{title:Results!}{description:You choose Paper 📰! I choose $get[botselection]!}{color:Yellow}}]
+async function playOnePlayer(ctx, choice) {
+  const botSelection = pick(["Rock 🌑", "Paper 📰", "Scissors ✂️"]);
 
-$interactionUpdate[{newEmbed:{title:$get[embedtitle]}{description:$get[embeddescription]}{color:$getVar[embedcolor]}}{actionRow:{button:Rock:2:rpsrockbutton:true:🌑}{button:Paper:2:rpspaperbutton:true:📰}{button:Scissors:2:rpsscissorsbutton:true:✂️}}]
+  await ctx.update({ embeds: [originalEmbed(ctx)], components: [gameRow()] });
 
+  const embed = new EmbedBuilder()
+    .setTitle("Results!")
+    .setDescription(`You choose ${CHOICES[choice].text}! I choose ${botSelection}!`)
+    .setColor("Yellow");
 
-$let[botselection;$randomText[Rock 🌑;Paper 📰;Scissors ✂️]]
-$let[embeddescription;$getEmbed[$channelID;$interactionData[message.id];1;description]]
-$let[embedtitle;$getEmbed[$channelID;$interactionData[message.id];1;title]]
-`
-},{
-    name: "rpsgameresults3",
-    type:"interaction",
-    prototype: "button",
-    code:`
+  await ctx.followUp({ embeds: [embed] });
+}
 
-$interactionFollowup[{newEmbed:{title:Results!}{description:You choose Scissors ✂️! I choose $get[botselection]!}{color:Yellow}}]
-
-$interactionUpdate[{newEmbed:{title:$get[embedtitle]}{description:$get[embeddescription]}{color:$getVar[embedcolor]}}{actionRow:{button:Rock:2:rpsrockbutton:true:🌑}{button:Paper:2:rpspaperbutton:true:📰}{button:Scissors:2:rpsscissorsbutton:true:✂️}}]
-
-
-$let[botselection;$randomText[Rock 🌑;Paper 📰;Scissors ✂️]]
-$let[embeddescription;$getEmbed[$channelID;$interactionData[message.id];1;description]]
-$let[embedtitle;$getEmbed[$channelID;$interactionData[message.id];1;title]]
-
-
- `
-}]
+module.exports = [
+  {
+    component: "button",
+    customId: "rpsrockbutton",
+    async execute(ctx) {
+      await playOnePlayer(ctx, "rpsrockbutton");
+    },
+  },
+  {
+    component: "button",
+    customId: "rpspaperbutton",
+    async execute(ctx) {
+      await playOnePlayer(ctx, "rpspaperbutton");
+    },
+  },
+  {
+    component: "button",
+    customId: "rpsscissorsbutton",
+    async execute(ctx) {
+      await playOnePlayer(ctx, "rpsscissorsbutton");
+    },
+  },
+];

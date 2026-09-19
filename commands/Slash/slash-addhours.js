@@ -1,38 +1,74 @@
-module.exports = {
-	name: "addhours",
-    type: "interaction",
-    prototype: "slash",
-    info: {
-    description: "Add volunteer hours to user.",
-    perms: ["`Administrator`", "`Role: 1519016533005832332`"]
-    },
-code:`
-$setGlobalUserVar[hours;$get[newTotal];$slashOption[user];custom]
-$logVolunteerHours[$slashOption[user];$slashOption[hours];$authorID;$get[newTotal]]
-$interactionReply[{newEmbed:{color:00ff00}{title:<a:tada:1324589971746586714> Volunteer Hours Added}{description:<@!$authorID> added \`$slashOption[hours]\` to <@!$slashOption[user]>. They now have \`$get[newTotal]\` hours.}}]
-$sendDm[{newEmbed:{title:Volunteer Hours Update}{description:<@!$authorID> gave you \`$slashOption[hours]\` hour(s).
-You now have \`$get[newTotal]\` hour(s).}{color:White}}{actionRow:{button:Don't reply \— bot can't read.:secondary:unimportantcustomid2:true}};$slashOption[user]]
-$let[newTotal;$sum[$getGlobalUserVar[hours;$slashOption[user];custom];$slashOption[hours]]]
-$onlyIf[$or[$hasPerms[$guildID;$authorID;administrator]==true;$hasRoles[$guildID;$authorID;1519016533005832332]==true]==true;{newEmbed:{title:Missing Permissions}{color:FF0000}{description:You need \`Administrator\` or the <@&1519016533005832332> role to run this command.}}
-{ephemeral}
-{interaction}]
-$onlyForGuilds[859910344393883710;You tried.
-{ephemeral}
-{interaction}]
-`
+"use strict";
+
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionFlagsBits } = require("discord.js");
+const { addHours } = require("../../src/services/hours");
+
+const VOLUNTEER_GUILD_ID = "859910344393883710";
+const STAFF_ROLE_ID = "1519016533005832332";
+
+function disabledReplyRow() {
+  return new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setLabel("Don't reply — bot can't read.")
+      .setStyle(ButtonStyle.Secondary)
+      .setCustomId("unimportantcustomid2")
+      .setDisabled(true)
+  );
 }
 
-// $createApplicationCommand[global;addhours;Add volunteer hours to user.;Administrator;guild;guild;slash;[
-//   {
-//     "type": 6,
-//     "name": "user",
-//     "description": "User",
-//     "required": true
-//   },
-//   {
-//     "type": 4,
-//     "name": "hours",
-//     "description": "Hours",
-//     "required": true
-//   }
-// ]]
+module.exports = {
+  slash: { name: "addhours" },
+  info: {
+    description: "Add volunteer hours to user.",
+    perms: ["`Administrator`", "`Role: 1519016533005832332`"],
+  },
+  async execute(ctx) {
+    if (ctx.guild?.id !== VOLUNTEER_GUILD_ID) {
+      return ctx.reply("You tried.", { flags: 64 });
+    }
+
+    const isStaff =
+      Boolean(ctx.member?.permissions?.has(PermissionFlagsBits.Administrator)) ||
+      Boolean(ctx.member?.roles?.cache?.has(STAFF_ROLE_ID));
+    if (!isStaff) {
+      const embed = new EmbedBuilder()
+        .setTitle("Missing Permissions")
+        .setColor("#FF0000")
+        .setDescription(`You need \`Administrator\` or the <@&${STAFF_ROLE_ID}> role to run this command.`);
+      return ctx.reply({ embeds: [embed] }, { flags: 64 });
+    }
+
+    const user = ctx.options.getUser("user");
+    const hours = ctx.options.getInteger("hours");
+
+    await ctx.defer({ flags: 64 });
+
+    const newTotal = await addHours(ctx.client, {
+      targetUserId: user.id,
+      amount: hours,
+      actorId: ctx.authorId,
+      guildId: ctx.guildId,
+    });
+
+    const dmEmbed = new EmbedBuilder()
+      .setTitle("Volunteer Hours Update")
+      .setColor("#FFFFFF")
+      .setDescription(`<@!${ctx.authorId}> gave you \`${hours}\` hour(s).\nYou now have \`${newTotal}\` hour(s).`);
+
+    try {
+      const target = await ctx.client.users.fetch(user.id);
+      await target.send({ embeds: [dmEmbed], components: [disabledReplyRow()] });
+    } catch {
+      /* legacy ignored closed DMs for this command */
+    }
+
+    const embed = new EmbedBuilder()
+      .setColor("#00FF00")
+      .setTitle("<a:tada:1324589971746586714> Volunteer Hours Added")
+      .setDescription(
+        `<@!${ctx.authorId}> added \`${hours}\` to <@!${user.id}>. They now have \`${newTotal}\` hours.`
+      );
+
+    await ctx.reply({ embeds: [embed] });
+  },
+};

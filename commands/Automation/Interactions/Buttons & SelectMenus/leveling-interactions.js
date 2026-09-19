@@ -1,543 +1,405 @@
-module.exports = [{
-    type: "interaction",
-    prototype: "button",
-    code: `
-    
-    $interactionUpdate[{newEmbed:{title:Leveling}{description:Leveling is a feature that let's members of the server have their levels and xp based on how much they have been active in the server.
-    
-    To get started, click on the "Toggle" button! To manage the settings regarding the said feature, press the "Settings" button.
-    
-    **Current Setup**
-    * $get[levelingsystem]
-    }{color:$getVar[embedcolor]}}{actionRow:{button:Toggle:2:toggleleveling_$authorID:false:🔄}{button:Settings:4:levelingsettings_$authorID:false}{button:Reset:2:levelingreset_$authorID:false:⚠️}}]
-    
-    
-    $let[levelingsystem;$advancedReplaceText[$getGuildVar[levelsystem];off;Disabled;on;Enabled]]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelinghomepage;]
-    
-    `
-    },{
-    type: "interaction",
-    prototype: "button",
-    code: `$interactionFollowUp[$get[resultmessage];true]
-    
-    $interactionUpdate[{newEmbed:{title:Leveling}{description:Leveling is a feature that let's members of the server have their levels and xp based on how much they have been active in the server.
-    
-    To get started, click on the "Toggle" button! To manage the settings regarding the said feature, press the "Settings" button.
-    
-    *$get[levelingsystem]*}{color:$getVar[embedcolor]}}{actionRow:{button:Toggle:2:toggleleveling_$authorID:false:🔄}{button:Settings:4:levelingsettings_$authorID:false}{button:Reset:2:levelingreset_$authorID:false:⚠️}}]
-    
-    
-    $let[levelingsystem;$advancedReplaceText[$getGuildVar[levelsystem];off;Disabled;on;Enabled]]
-    $let[resultmessage;$advancedReplaceText[$checkCondition[$getGuildVar[levelsystem]==on];true;Successfully enabled Leveling!;false;Successfully disabled Leveling!]]
-
-    $setGuildVar[levelsystem;$get[newtoggledsetting];$guildID]
-    $let[newtoggledsetting;$advancedReplaceText[$checkCondition[$getGuildVar[levelsystem]==on];true;off;false;on]]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==toggleleveling;]
-    `
-    },{
-        type: "interaction",
-        prototype: "button",
-        code: `$interactionReply[{newEmbed:{title:Reset Leveling?}{description:Are you sure you want to reset Leveling in this server? All members (including the ones who left the server) will lose their progress.}{color:Red}{thumbnail:https#COLON#//us-east-1.tixte.net/uploads/dodo-bot.wants.solutions/warning.png}}{actionRow:{button:Yes:2:levelingresetconfirm:false}{button:No:2:levelingresetdeny:false}};all;true]
-
-$onlyIf[$getGuildVar[levelsystem]==on;
-Leveling must be enabled first.
-{ephemeral}
-{interaction}
-    ]
-
-$onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-{ephemeral}
-{interaction}
-    ]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingreset;]
-`
-    },{
-        name: "levelingresetconfirm",
-        type: "interaction",
-        prototype: "button",
-        code: `$interactionUpdate[Leveling has been reset!]
-$awaitExecute[resetleveling]
-
-$onlyIf[$getGuildVar[islevelingreset]==no;Leveling is already reset in this server.
-{ephemeral}
-{interaction}
-    ]
-`
-    },{
-        name: "levelingresetdeny",
-        type: "interaction",
-        prototype: "button",
-        code: `
-$interactionUpdate[The current progress for all members will remain then.]
-
-`
-    },{
-        type: "interaction",
-        prototype: "button",
-        code: `$interactionUpdate[{newEmbed:{title:Leveling settings}{description:Welcome to Leveling settings! Select a option to change.
-
-
- }{field:**Current Setup**:
-**Level up channel#COLON#** $get[levelupchannel]
-**Level up message#COLON#** \`$get[levelupmessage]\`
-}{color:$getVar[embedcolor]}}{actionRow:{selectMenu:levelingotheroptionsmenu_$authorID:Other options:1:1:false:{stringInput:Reset on Leave:resetonleave:Reset user's progress when they leave:false}{stringInput:Exclusions:exclusions:Choose what to exclude from allowing xp:false}}}
-
-    {actionRow:{button:Home:2:levelinghomepage_$authorID:false:🏠}{button:Message:2:levelingsettingmessage_$authorID:false}{button:Placeholders:2:levelingmsgplaceholders_$authorID:false}}
-]
-    
-    
-
-    $let[levelupchannel;$advancedReplaceText[$checkCondition[$getGuildVar[levelingmessagechannel]==none];true;none;false;<#$getGuildVar[levelingmessagechannel]> (\`$getGuildVar[levelingmessagechannel]\`)]]
-    $let[levelupmessage;$advancedReplaceText[$checkCondition[$getGuildVar[levelmessagefeature]==on];true;Enabled;false;Disabled]]
-
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingsettings;]
-    `
-    },{
-        type: "interaction",
-        prototype: "button",
-        code: `$interactionUpdate[{newEmbed:{title:Level up Message}{description:This option is dedicated to changing current options for level up message. Choose an option to change.
-    
-Press the "Toggle" button to enable/disable the Level up Message or use the other options alternatively to manage level up message settings.}{field:**Current Setup**:
-* **Level up channel#COLON#** $get[levelupchannel]
-* **Level up message#COLON#** \`$get[levelupmessage]\`
-}{color:$getVar[embedcolor]}}{actionRow:{button:Go back:2:levelingsettings_$authorID:false:↩️}{button:Toggle:2:enablelevelingmessage_$authorID:false:🔄}{button:Set Channel:2:levelingchannelsetup_$authorID:false}{button:Set Message:2:levelingsetmsgmodal_$authorID:false}}{actionRow:{button:Test Message:2:levelingtestmessage_$authorID:false}}]
-    
-    $let[levelupchannel;$advancedReplaceText[$checkCondition[$getGuildVar[levelingmessagechannel]==none];true;none;false;<#$getGuildVar[levelingmessagechannel]> (\`$getGuildVar[levelingmessagechannel]\`)]]
-    $let[levelupmessage;$advancedReplaceText[$checkCondition[$getGuildVar[levelmessagefeature]==on];true;Enabled;false;Disabled]]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingsettingmessage;]
-    `
-    },{
-        type: "interaction",
-        prototype: "button",
-        code: `$interactionFollowUp[$get[resultmessage];true]
-    $interactionUpdate[{newEmbed:{title:Level up Message}{description:This option is dedicated to changing current options for level up message. Choose an option to change.
-
-Press the "Toggle" button to enable/disable the Level up Message or use the other options alternatively to manage level up message settings.}{field:**Current Setup**:
-* **Level up channel#COLON#** $get[levelupchannel]
-* **Level up message#COLON#** \`$get[levelupmessage]\`
-}{color:$getVar[embedcolor]}}{actionRow:{button:Go back:2:levelingsettings_$authorID:false:↩️}{button:Toggle:2:enablelevelingmessage_$authorID:false:🔄}{button:Set Channel:2:levelingchannelsetup_$authorID:false}{button:Set Message:2:levelingsetmsgmodal_$authorID:false}}{actionRow:{button:Test Message:2:levelingtestmessage_$authorID:false}}]
-    
-    $let[levelupchannel;$advancedReplaceText[$checkCondition[$getGuildVar[levelingmessagechannel]==none];true;none;false;<#$getGuildVar[levelingmessagechannel]> (\`$getGuildVar[levelingmessagechannel]\`)]]
-    $let[levelupmessage;$advancedReplaceText[$checkCondition[$getGuildVar[levelmessagefeature]==on];true;Enabled;false;Disabled]]
-    
-    
-    $let[resultmessage;$advancedReplaceText[$checkCondition[$getGuildVar[levelmessagefeature]==on];true;From now on, Level up messages will be sent by the bot!;false;From now on, Level up messages will no longer be sent by the bot]]
-    $setGuildVar[levelmessagefeature;$get[newtoggledsetting]]
-    $let[newtoggledsetting;$advancedReplaceText[$checkCondition[$getGuildVar[levelmessagefeature]==on];true;off;false;on]]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==enablelevelingmessage;]
-    `
-    },{
-        type: "interaction",
-        prototype: "button",
-        code: `$interactionModal[Set Message;levelingsetmsgresult;
-    {actionRow:
-        {textInput:Message to use:2:textInput:true:e.g, <username> has Leveled up!:0:200:$getGuildVar[levelmessage]}
-      }]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingsetmsgmodal;]
-    `
-    },{
-        name: "levelingsetmsgresult",
-        type: "interaction",
-        prototype: "modal",
-        code: `$setGuildVar[levelmessage;$textInputValue[textInput]]
-    $interactionReply[Successfully set the Level up message!;all;true]
-    `
-    },{
-        type: "interaction",
-        prototype: "button",
-        code: `$interactionUpdate[{newEmbed:{title:Channel Setup}{description:Choose a channel for Level up messages to be sent in. Use the select menu below for the channel to use!
-    
-**Tip#COLON#** Unable to find the channel you're looking for? Try typing the channel name instead!
-}{field:**Current Channel**:
-* $get[levelupchannel]
-}{color:$getVar[embedcolor]}}{actionRow:{selectMenu:levelingchannelmenusetup_$authorID:Select a channel to use.:1:1:false:{channelInput:Text:Announcement}}}{actionRow:{button:Go back:2:levelingsettingmessage_$authorID:false:↩️}{button:Reset:2:levelingresetchannel_$authorID:false}}]
-    
-    $let[levelupchannel;$advancedReplaceText[$checkCondition[$getGuildVar[levelingmessagechannel]==none];true;none;false;<#$getGuildVar[levelingmessagechannel]> (\`$getGuildVar[levelingmessagechannel]\`)]]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingchannelsetup;]
-    `
-    },{
-        type: "interaction",
-        prototype: "selectMenu",
-        code: `$interactionFollowUp[<#$getSelectMenuValues[all]> will now be used for Level up messages!;true]
-    
-    $interactionUpdate[{newEmbed:{title:Channel Setup}{description:Choose a channel for Level up messages to be sent in. Use the select menu below for the channel to use!
-
-**Tip#COLON#** Unable to find the channel you're looking for? Try typing the channel name instead!
-}{field:**Current Channel**:
-* $get[levelupchannel]
-}{color:$getVar[embedcolor]}}{actionRow:{selectMenu:levelingchannelmenusetup_$authorID:Select a channel to use.:1:1:false:{channelInput:Text:Announcement}}}{actionRow:{button:Go back:2:levelingsettingmessage_$authorID:false:↩️}{button:Reset:2:levelingresetchannel_$authorID:false}}]
-    
-    $let[levelupchannel;$advancedReplaceText[$checkCondition[$getGuildVar[levelingmessagechannel]==none];true;none;false;<#$getGuildVar[levelingmessagechannel]> (\`$getGuildVar[levelingmessagechannel]\`)]]
-    
-    $setGuildVar[levelingmessagechannel;$getSelectMenuValues[all]]
-    
-    $onlyIf[$hasPermsInChannel[$getSelectMenuValues[all];$clientID;sendmessages;viewchannel]==true;Hmm. Seems like i don't have the right permissions there. Please ensure that i have the following permissions for the channel <#$getSelectMenuValues[all]>:
-    \`ViewChannel\`
-    \`SendMessages\`
-    {ephemeral}
-    {interaction}
-    ]
-    
-    $onlyIf[$getSelectMenuValues[all]!=$getGuildVar[levelingmessagechannel];
-    This channel is already used for Level up messages. Please, set a different channel instead.
-    {ephemeral}
-    {interaction}
-    ]
-    
-    $onlyIf[$guildChannelExists[$guildID;$getSelectMenuValues[all]]==true;The channel you chose no longer exists in this server.
-    Please set a valid channel which exists inside this server.
-    {ephemeral}
-    {interaction}
-    ]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingchannelmenusetup;]
-    
-    `
-    },{
-        type: "interaction",
-        prototype: "button",
-        code: `$interactionFollowUp[Channel has been reset!;true]
-
-    $interactionUpdate[{newEmbed:{title:Channel Setup}{description:Choose a channel for Level up messages to be sent in. Use the select menu below for the channel to use!
-
-**Tip#COLON#** Unable to find the channel you're looking for? Try typing the channel name instead!
-}{field:**Current Channel**:
-* $get[levelupchannel]
-}{color:$getVar[embedcolor]}}{actionRow:{selectMenu:levelingchannelmenusetup_$authorID:Select a channel to use.:1:1:false:{channelInput:Text:Announcement}}}{actionRow:{button:Go back:2:levelingsettingmessage_$authorID:false:↩️}{button:Reset:2:levelingresetchannel_$authorID:false}}]
-
-    $let[levelupchannel;$advancedReplaceText[$checkCondition[$getGuildVar[levelingmessagechannel]==none];true;none;false;<#$getGuildVar[levelingmessagechannel]> (\`$getGuildVar[levelingmessagechannel]\`)]]
-
-    $deleteVar[levelingmessagechannel;$guildID;main]
-
-    $onlyIf[$getGuildVar[levelingmessagechannel]!=none;
-    There's no channel to reset.
-    {ephemeral}
-    {interaction}
-    ]
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingresetchannel;]
-
-    `
-    },{
-        type: "interaction",
-        prototype: "button",
-        code: `
-    $interactionReply[Successfully sent the message to the Level up channel for testing!;all;true]
-    $channelSendMessage[$getGuildVar[levelingmessagechannel];
-    **This is a test Level up message! Please, ignore this!**
-    $get[content]
-    ]
-    
-    $let[content;$advancedReplaceText[$nonEscape[$getGuildVar[levelmessage]];<newlevel>;$getUserVar[level];<mention>;<@$authorID>;<username>;$username;<oldlevel>;$getUserVar[previouslevel];<Displayname>;$userDisplayName]]
-    
-    $onlyIf[$hasPermsInChannel[$getGuildVar[levelingmessagechannel];$clientID;sendmessages;viewchannel]==true;Hmm. Seems like i don't have the right permissions there. Please ensure that i have the following permissions for the channel <#$getGuildVar[levelingmessagechannel]>:
-    \`ViewChannel\`
-    \`SendMessages\`
-    {ephemeral}
-    {interaction}
-    ]
-    
-    $onlyIf[$guildChannelExists[$guildID;$getGuildVar[levelingmessagechannel]]==true;The channel used for Level up message seems to be deleted.
-    Cancelled sending the message as a result. Please set a new channel to fix this.
-    {ephemeral}
-    {interaction}
-    ]
-    
-    $onlyIf[$getGuildVar[levelingmessagechannel]!=none;There is no channel set to test the Level up message.
-    Please set a new channel first.
-    {ephemeral}
-    {interaction}
-    ]
-    
-    $disableMentionType[roles]
-    $disableMentionType[everyone]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingtestmessage;]
-    `
-    },{
-        type: "interaction",
-        prototype: "selectMenu",
-        code: `$interactionUpdate[{newEmbed:{title:Exclusions}{description:This category is dedicated to choosing on what should be excluded from allowing xp!
-
-To manage a specific setting, use any of the buttons below to do so!
-    }{color:$getVar[embedcolor]}}{actionRow:{button:Go back:2:levelingsettings_$authorID:false:↩️}{button:Channels:2:levelingexcludechannelssetting_$authorID:false}{button:Categories:2:levelingexcludecategoriessetting_$authorID:false}}]
-
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-    $onlyIf[$getSelectMenuValues[all]==exclusions;]
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingotheroptionsmenu;]`
-    },{
-        type: "interaction",
-        prototype: "button",
-        code: `$interactionUpdate[{newEmbed:{title:Exclusions}{description:This category is dedicated to choosing on what should be excluded from allowing xp!
-
-To manage a specific setting, use any of the buttons below to do so!
-    }{color:$getVar[embedcolor]}}{actionRow:{button:Go back:2:levelingsettings_$authorID:false:↩️}{button:Channels:2:levelingexcludechannelssetting_$authorID:false}{button:Categories:2:levelingexcludecategoriessetting_$authorID:false}}]
-
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingexclusionshome;]`
-    },{
-        type: "interaction",
-        prototype: "button",
-        code: `$interactionUpdate[{newEmbed:{title:Channels}{description:Use the dropdown menu below to select channels to exclude from xp. (You can add up to 10)!
-
-**Tip#COLON#** Unable to find the channel you're looking for? Try typing the channel name instead!
-}{field:**Current Channel(s)**:
-$autoList[$nonEscape[$getGuildVar[levelingexcludedchannels]];, ;autoListChannels]
-}{color:$getVar[embedcolor]}}{actionRow:{selectMenu:levelingexcludechannelmenusetup_$authorID:Select channels.:1:10:false:{channelInput:Text}}}{actionRow:{button:Go back:2:levelingexclusionshome_$authorID:false:↩️}{button:Reset:2:levelingexcludechannelreset_$authorID:false}}]
-
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingexcludechannelssetting;]
-    `
-    },{
-        type: "interaction",
-        prototype: "selectMenu",
-        code: `$interactionFollowUp[Successfully updated the list!;true]
-
-    $interactionUpdate[{newEmbed:{title:Channels}{description:Use the dropdown menu below to select channels to exclude from xp. (You can add up to 10)!
-
-**Tip#COLON#** Unable to find the channel you're looking for? Try typing the channel name instead!
-}{field:**Current Channel(s)**:
-$autoList[$nonEscape[$getGuildVar[levelingexcludedchannels]];, ;autoListChannels]
-}{color:$getVar[embedcolor]}}{actionRow:{selectMenu:levelingexcludechannelmenusetup_$authorID:Select channels.:1:10:false:{channelInput:Text}}}{actionRow:{button:Go back:2:levelingexclusionshome_$authorID:false:↩️}{button:Reset:2:levelingexcludechannelreset_$authorID:false}}]
-
-    $setGuildVar[levelingexcludedchannels;$getSelectMenuValues[all;, ]]
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingexcludechannelmenusetup;]
-
-    `
-    },{
-        type: "interaction",
-        prototype: "button",
-        code: `$interactionFollowUp[Successfully reset the current list!;true]
-
-    $interactionUpdate[{newEmbed:{title:Channels}{description:Use the dropdown menu below to select channels to exclude from xp. (You can add up to 10)!
-
-**Tip#COLON#** Unable to find the channel you're looking for? Try typing the channel name instead!
-}{field:**Current Channel(s)**:
-$autoList[$nonEscape[$getGuildVar[levelingexcludedchannels]];, ;autoListChannels]
-}{color:$getVar[embedcolor]}}{actionRow:{selectMenu:levelingexcludechannelmenusetup_$authorID:Select channels.:1:10:false:{channelInput:Text}}}{actionRow:{button:Go back:2:levelingexclusionshome_$authorID:false:↩️}{button:Reset:2:levelingexcludechannelreset_$authorID:false}}]
-
-    $deleteVar[levelingexcludedchannels;$guildID;main]
-
-    $onlyIf[$getGuildVar[levelingexcludedchannels]!=none;
-    There's nothing to reset.
-    {ephemeral}
-    {interaction}
-    ]
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingexcludechannelreset;]
-
-    `
-    },{
-        type: "interaction",
-        prototype: "button",
-        code: `$interactionUpdate[{newEmbed:{title:Categories}{description:Use the dropdown menu below to select channel categories to exclude from xp. (You can add up to 10)!
-
-**Tip#COLON#** Unable to find the category you're looking for? Try typing the category name instead!
-}{field:**Current Categories**:
-$autoList[$nonEscape[$getGuildVar[levelingexcludedcategories]];, ;autoListCategories]
-}{color:$getVar[embedcolor]}}{actionRow:{selectMenu:levelingexcludecategoriesmenusetup_$authorID:Select categories.:1:10:false:{channelInput:Category}}}{actionRow:{button:Go back:2:levelingexclusionshome_$authorID:false:↩️}{button:Reset:2:levelingexcludecategoriesreset_$authorID:false}}]
-
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingexcludecategoriessetting;]
-    `
-    },{
-        type: "interaction",
-        prototype: "selectMenu",
-        code: `$interactionFollowUp[Successfully updated the list!;true]
-
-    $interactionUpdate[{newEmbed:{title:Categories}{description:Use the dropdown menu below to select channel categories to exclude from xp. (You can add up to 10)!
-
-**Tip#COLON#** Unable to find the category you're looking for? Try typing the category name instead!
-}{field:**Current Categories**:
-$autoList[$nonEscape[$getGuildVar[levelingexcludedcategories]];, ;autoListCategories]
-}{color:$getVar[embedcolor]}}{actionRow:{selectMenu:levelingexcludecategoriesmenusetup_$authorID:Select categories.:1:10:false:{channelInput:Category}}}{actionRow:{button:Go back:2:levelingexclusionshome_$authorID:false:↩️}{button:Reset:2:levelingexcludecategoriesreset_$authorID:false}}]
-
-    $setGuildVar[levelingexcludedcategories;$getSelectMenuValues[all;, ]]
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingexcludecategoriesmenusetup;]
-
-    `
-    },{
-        type: "interaction",
-        prototype: "button",
-        code: `$interactionFollowUp[Successfully reset the current list!;true]
-
-    $interactionUpdate[{newEmbed:{title:Categories}{description:Use the dropdown menu below to select channel categories to exclude from xp. (You can add up to 10)!
-
-**Tip#COLON#** Unable to find the category you're looking for? Try typing the category name instead!
-}{field:**Current Categories**:
-$autoList[$nonEscape[$getGuildVar[levelingexcludedcategories]];, ;autoListCategories]
-}{color:$getVar[embedcolor]}}{actionRow:{selectMenu:levelingexcludecategoriesmenusetup_$authorID:Select categories.:1:10:false:{channelInput:Category}}}{actionRow:{button:Go back:2:levelingexclusionshome_$authorID:false:↩️}{button:Reset:2:levelingexcludecategoriesreset_$authorID:false}}]
-
-    $deleteVar[levelingexcludedcategories;$guildID;main]
-
-    $onlyIf[$getGuildVar[levelingexcludedcategories]!=none;
-    There's nothing to reset.
-    {ephemeral}
-    {interaction}
-    ]
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingexcludecategoriesreset;]
-
-    `
-    },{
-        type: "interaction",
-        prototype: "selectMenu",
-        code: `$interactionUpdate[{newEmbed:{title:Reset on Leave}{description:This option let's you reset User's current level whenever they leave the server. 
-    
-    By default, this is disabled but you can choose to enable it if you want to do so.
-}{field:**Current Setup**:
-* **Reset on Leave#COLON#** \`$get[leaveonreset]\`
-}{color:$getVar[embedcolor]}}{actionRow:{button:Go back:2:levelingsettings_$authorID:false:↩️}{button:Toggle:2:togglelevelingleaveonreset_$authorID:false:🔄}}]
-    
-    $let[leaveonreset;$advancedReplaceText[$getGuildVar[levelleaveonreset];on;Enabled;off;Disabled]]
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-    $onlyIf[$getSelectMenuValues[all]==resetonleave;]
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingotheroptionsmenu;]`
-    },{
-        type: "interaction",
-        prototype: "button",
-        code: `$interactionFollowUp[$get[resultmessage];true]
-    $interactionUpdate[{newEmbed:{title:Reset on Leave}{description:This option let's you reset User's current level whenever they leave the server.
-
-    By default, this is disabled but you can choose to enable it if you want to do so.
-}{field:**Current Setup**:
-* **Reset on Leave#COLON#** \`$get[leaveonreset]\`
-}{color:$getVar[embedcolor]}}{actionRow:{button:Go back:2:levelingsettings_$authorID:false:↩️}{button:Toggle:2:togglelevelingleaveonreset_$authorID:false:🔄}}]
-    
-    $let[leaveonreset;$advancedReplaceText[$getGuildVar[levelleaveonreset];on;Enabled;off;Disabled]]
-    
-    
-    $let[resultmessage;$advancedReplaceText[$checkCondition[$getGuildVar[levelleaveonreset]==on];true;User's levels will now reset whenever they leave!;false;User's levels will no longer reset whenever they leave!]]
-    $setGuildVar[levelleaveonreset;$get[newtoggledsetting]]
-    $let[newtoggledsetting;$advancedReplaceText[$checkCondition[$getGuildVar[levelleaveonreset]==on];true;off;false;on]]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-    
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==togglelevelingleaveonreset;]`
-    },{
-        type: "interaction",
-        prototype: "button",
-        code: `$interactionUpdate[{newEmbed:{title:Placeholders}{description:Placeholders allows you to make your custom Level up message unique. Use the current ones available in this list!}{field:Member-related:
-    \`<username>\` - Returns the member's username
-    \`<Displayname>\` - Returns the member's displayname
-    \`<mention>\` - Pings the member
-    }{field:Leveling-related:
-    \`<newlevel>\` - Returns the new level of the member
-    \`<oldlevel>\` - Returns the previous level the member once had
-    }{color:$getVar[embedcolor]}}{actionRow:{button:Go back:2:levelingsettings_$authorID:false:↩️}}]
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;2]==$interactionData[author.id];This interaction is not for you.
-    {ephemeral}
-    {interaction}
-    ]
-
-    $onlyIf[$advancedTextSplit[$interactionData[customId];_;1]==levelingmsgplaceholders;]
-
-    `
-    }]
-    
+"use strict";
+
+const { PermissionFlagsBits } = require("discord.js");
+
+const {
+  permissionMessage,
+  buildHomeEmbed,
+  buildHomeComponents,
+  buildSettingsEmbed,
+  buildSettingsComponents,
+  buildMessageEmbed,
+  buildMessageComponents,
+  buildChannelSetupEmbed,
+  buildChannelSetupComponents,
+  buildExclusionsEmbed,
+  buildExclusionsComponents,
+  buildExcludeChannelsEmbed,
+  buildExcludeChannelsComponents,
+  buildExcludeCategoriesEmbed,
+  buildExcludeCategoriesComponents,
+  buildResetOnLeaveEmbed,
+  buildResetOnLeaveComponents,
+  buildPlaceholdersEmbed,
+  buildPlaceholdersComponents,
+  buildResetConfirmEmbed,
+  buildResetConfirmComponents,
+  buildSetMessageModal,
+} = require("../../../../src/services/levelingMenu");
+
+const { resetLeveling } = require("../../../../commands/Automation/Awaited/levelingresets");
+const { applyTemplate } = require("../../../../src/utils/templates");
+
+function ownerMismatch(ctx) {
+  return ctx.parts[1] !== ctx.authorId;
+}
+
+function notForYou(ctx) {
+  return ctx.reply("This interaction is not for you.", { flags: 64 });
+}
+
+function homePayload(ctx) {
+  return { embeds: [buildHomeEmbed(ctx)], components: buildHomeComponents(ctx) };
+}
+
+function settingsPayload(ctx) {
+  return { embeds: [buildSettingsEmbed(ctx)], components: buildSettingsComponents(ctx) };
+}
+
+function messagePayload(ctx) {
+  return { embeds: [buildMessageEmbed(ctx)], components: buildMessageComponents(ctx) };
+}
+
+function channelPayload(ctx) {
+  return { embeds: [buildChannelSetupEmbed(ctx)], components: buildChannelSetupComponents(ctx) };
+}
+
+function exclusionsPayload(ctx) {
+  return { embeds: [buildExclusionsEmbed(ctx)], components: buildExclusionsComponents(ctx) };
+}
+
+function channelsPayload(ctx) {
+  return { embeds: [buildExcludeChannelsEmbed(ctx)], components: buildExcludeChannelsComponents(ctx) };
+}
+
+function categoriesPayload(ctx) {
+  return { embeds: [buildExcludeCategoriesEmbed(ctx)], components: buildExcludeCategoriesComponents(ctx) };
+}
+
+function resetOnLeavePayload(ctx) {
+  return { embeds: [buildResetOnLeaveEmbed(ctx)], components: buildResetOnLeaveComponents(ctx) };
+}
+
+function placeholdersPayload(ctx) {
+  return { embeds: [buildPlaceholdersEmbed(ctx)], components: buildPlaceholdersComponents(ctx) };
+}
+
+async function resolveChannel(ctx, channelId) {
+  return ctx.guild.channels.cache.get(channelId) ?? (await ctx.guild.channels.fetch(channelId).catch(() => null));
+}
+
+async function canUseChannel(channel) {
+  const me = channel.guild.members.me ?? (await channel.guild.members.fetchMe().catch(() => null));
+  return Boolean(channel.permissionsFor(me)?.has([PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages]));
+}
+
+async function toggleExclusionList(ctx, variable, payload) {
+  const values = ctx.values.filter(Boolean);
+  ctx.setGuildVar(variable, values.length ? values.join(", ") : "none");
+  await ctx.update(payload(ctx));
+  await ctx.followUp("Successfully updated the list!", { flags: 64 });
+}
+
+async function resetExclusionList(ctx, variable, payload) {
+  const current = ctx.getGuildVar(variable);
+  if (!current || current === "none") {
+    return ctx.reply("There's nothing to reset.", { flags: 64 });
+  }
+
+  ctx.db.deleteGuildVar(ctx.guildId, variable);
+  await ctx.update(payload(ctx));
+  await ctx.followUp("Successfully reset the current list!", { flags: 64 });
+}
+
+module.exports = [
+  {
+    component: "button",
+    customId: "levelinghomepage",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+      await ctx.update(homePayload(ctx));
+    },
+  },
+  {
+    component: "button",
+    customId: "toggleleveling",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+
+      const currentlyOn = ctx.getGuildVar("levelsystem") === "on";
+      const next = currentlyOn ? "off" : "on";
+      ctx.setGuildVar("levelsystem", next);
+
+      await ctx.update(homePayload(ctx));
+      await ctx.followUp(next === "on" ? "Successfully enabled Leveling!" : "Successfully disabled Leveling!", {
+        flags: 64,
+      });
+    },
+  },
+  {
+    component: "button",
+    customId: "levelingreset",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+      if (ctx.getGuildVar("levelsystem") !== "on") {
+        return ctx.reply("Leveling must be enabled first.", { flags: 64 });
+      }
+
+      await ctx.reply(
+        { embeds: [buildResetConfirmEmbed(ctx)], components: buildResetConfirmComponents() },
+        { flags: 64 }
+      );
+    },
+  },
+  {
+    component: "button",
+    customId: "levelingresetconfirm",
+    async execute(ctx) {
+      if (ctx.getGuildVar("islevelingreset") !== "no") {
+        return ctx.reply("Leveling is already reset in this server.", { flags: 64 });
+      }
+
+      resetLeveling(ctx.client, ctx.guildId);
+      await ctx.update("Leveling has been reset!");
+    },
+  },
+  {
+    component: "button",
+    customId: "levelingresetdeny",
+    async execute(ctx) {
+      await ctx.update("The current progress for all members will remain then.");
+    },
+  },
+  {
+    component: "button",
+    customId: "levelingsettings",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+      await ctx.update(settingsPayload(ctx));
+    },
+  },
+  {
+    component: "button",
+    customId: "levelingsettingmessage",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+      await ctx.update(messagePayload(ctx));
+    },
+  },
+  {
+    component: "button",
+    customId: "enablelevelingmessage",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+
+      const currentlyOn = ctx.getGuildVar("levelmessagefeature") === "on";
+      const next = currentlyOn ? "off" : "on";
+      ctx.setGuildVar("levelmessagefeature", next);
+
+      await ctx.update(messagePayload(ctx));
+      await ctx.followUp(
+        next === "on"
+          ? "From now on, Level up messages will be sent by the bot!"
+          : "From now on, Level up messages will no longer be sent by the bot",
+        { flags: 64 }
+      );
+    },
+  },
+  {
+    component: "button",
+    customId: "levelingsetmsgmodal",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+      await ctx.showModal(buildSetMessageModal(ctx.getGuildVar("levelmessage")));
+    },
+  },
+  {
+    component: "modal",
+    customId: "levelingsetmsgresult",
+    async execute(ctx) {
+      ctx.setGuildVar("levelmessage", ctx.interaction.fields.getTextInputValue("textInput"));
+      await ctx.reply("Successfully set the Level up message!", { flags: 64 });
+    },
+  },
+  {
+    component: "button",
+    customId: "levelingchannelsetup",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+      await ctx.update(channelPayload(ctx));
+    },
+  },
+  {
+    component: "select",
+    customId: "levelingchannelmenusetup",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+
+      const selected = ctx.values[0];
+      const channel = await resolveChannel(ctx, selected);
+      if (!channel) {
+        return ctx.reply(
+          "The channel you chose no longer exists in this server.\nPlease set a valid channel which exists inside this server.",
+          { flags: 64 }
+        );
+      }
+
+      if (selected === ctx.getGuildVar("levelingmessagechannel")) {
+        return ctx.reply("This channel is already used for Level up messages. Please, set a different channel instead.", {
+          flags: 64,
+        });
+      }
+
+      if (!(await canUseChannel(channel))) {
+        return ctx.reply(permissionMessage(selected), { flags: 64 });
+      }
+
+      ctx.setGuildVar("levelingmessagechannel", selected);
+      await ctx.update(channelPayload(ctx));
+      await ctx.followUp(`<#${selected}> will now be used for Level up messages!`, { flags: 64 });
+    },
+  },
+  {
+    component: "button",
+    customId: "levelingresetchannel",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+
+      const current = ctx.getGuildVar("levelingmessagechannel");
+      if (!current || current === "none") {
+        return ctx.reply("There's no channel to reset.", { flags: 64 });
+      }
+
+      ctx.db.deleteGuildVar(ctx.guildId, "levelingmessagechannel");
+      await ctx.update(channelPayload(ctx));
+      await ctx.followUp("Channel has been reset!", { flags: 64 });
+    },
+  },
+  {
+    component: "button",
+    customId: "levelingtestmessage",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+
+      const channelId = ctx.getGuildVar("levelingmessagechannel");
+      if (!channelId || channelId === "none") {
+        return ctx.reply("There is no channel set to test the Level up message.\nPlease set a new channel first.", {
+          flags: 64,
+        });
+      }
+
+      const channel = await resolveChannel(ctx, channelId);
+      if (!channel || !channel.isTextBased()) {
+        return ctx.reply(
+          "The channel used for Level up message seems to be deleted.\nCancelled sending the message as a result. Please set a new channel to fix this.",
+          { flags: 64 }
+        );
+      }
+
+      if (!(await canUseChannel(channel))) {
+        return ctx.reply(permissionMessage(channelId), { flags: 64 });
+      }
+
+      const content = applyTemplate(ctx.getGuildVar("levelmessage"), {
+        "<newlevel>": String(ctx.db.getUserVar(ctx.guildId, ctx.authorId, "level")),
+        "<mention>": `<@${ctx.authorId}>`,
+        "<username>": ctx.author.username,
+        "<oldlevel>": String(ctx.db.getUserVar(ctx.guildId, ctx.authorId, "previouslevel")),
+        "<Displayname>": ctx.member?.displayName ?? ctx.author.username,
+      });
+
+      await channel.send({
+        content: `**This is a test Level up message! Please, ignore this!**\n${content}`,
+        allowedMentions: { parse: ["users"] },
+      });
+      await ctx.reply("Successfully sent the message to the Level up channel for testing!", { flags: 64 });
+    },
+  },
+  {
+    component: "select",
+    customId: "levelingotheroptionsmenu",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+
+      const value = ctx.values[0];
+      if (value === "exclusions") {
+        await ctx.update(exclusionsPayload(ctx));
+      } else if (value === "resetonleave") {
+        await ctx.update(resetOnLeavePayload(ctx));
+      }
+    },
+  },
+  {
+    component: "button",
+    customId: "levelingexclusionshome",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+      await ctx.update(exclusionsPayload(ctx));
+    },
+  },
+  {
+    component: "button",
+    customId: "levelingexcludechannelssetting",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+      await ctx.update(channelsPayload(ctx));
+    },
+  },
+  {
+    component: "select",
+    customId: "levelingexcludechannelmenusetup",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+      await toggleExclusionList(ctx, "levelingexcludedchannels", channelsPayload);
+    },
+  },
+  {
+    component: "button",
+    customId: "levelingexcludechannelreset",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+      await resetExclusionList(ctx, "levelingexcludedchannels", channelsPayload);
+    },
+  },
+  {
+    component: "button",
+    customId: "levelingexcludecategoriessetting",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+      await ctx.update(categoriesPayload(ctx));
+    },
+  },
+  {
+    component: "select",
+    customId: "levelingexcludecategoriesmenusetup",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+      await toggleExclusionList(ctx, "levelingexcludedcategories", categoriesPayload);
+    },
+  },
+  {
+    component: "button",
+    customId: "levelingexcludecategoriesreset",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+      await resetExclusionList(ctx, "levelingexcludedcategories", categoriesPayload);
+    },
+  },
+  {
+    component: "button",
+    customId: "togglelevelingleaveonreset",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+
+      const currentlyOn = ctx.getGuildVar("levelleaveonreset") === "on";
+      const next = currentlyOn ? "off" : "on";
+      ctx.setGuildVar("levelleaveonreset", next);
+
+      await ctx.update(resetOnLeavePayload(ctx));
+      await ctx.followUp(
+        next === "on"
+          ? "User's levels will now reset whenever they leave!"
+          : "User's levels will no longer reset whenever they leave!",
+        { flags: 64 }
+      );
+    },
+  },
+  {
+    component: "button",
+    customId: "levelingmsgplaceholders",
+    async execute(ctx) {
+      if (ownerMismatch(ctx)) return notForYou(ctx);
+      await ctx.update(placeholdersPayload(ctx));
+    },
+  },
+];

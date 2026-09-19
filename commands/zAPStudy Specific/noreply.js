@@ -1,53 +1,78 @@
-module.exports = [{
-	name: "noreply",
-	type: "interaction",
-	prototype: "slash",
-	$if: "old",
-	info: {
-		description: "Send a no-reply channel reminder DM to a user.",
-		perms: ["`Role: 1519016533005832332`"]
-	},
-	code: `
-$if[$isUserDmEnabled[$slashOption[user]]==true]
-$interactionReply[{newEmbed:{title:Success!}{description:You have sent <@!$slashOption[user]> a DM message}{color:00FF00}}]
-$sendDm[{newEmbed:{title:Message from $username[$authorID]}{description:Please check <#$channelID> as soon as you can!
-Sent from $guildName[$guildID]}{color:White}}
-{actionRow:{button:Don't reply \— bot can't read.:secondary:unimportantcustomid2:true}};$slashOption[user]]
-$else
-$interactionReply[{newEmbed:{title:Failed!}{description:<@!$slashOption[user]> does not have their DMs open.}{color:red}}]
-$endif
+"use strict";
 
-$onlyForRoles[1519016533005832332;{newEmbed:{title:Missing Permissions}{color:FF0000}{description:You need the <@&1519016533005832332> role to run this command.}}
-{ephemeral}
-{interaction}]
-$onlyForCategories[1356279309169328158;{newEmbed:{title:Error}{color:FF0000}{description:This command cannot be used here!}}
-{ephemeral}
-{interaction}]
-$onlyForGuilds[859910344393883710;You tried.
-{ephemeral}
-{interaction}]
-`
-}, {
-	name: "register-noreply-slash",
-	type: "ready",
-	code: `
-$createApplicationCommand[859910344393883710;noreply;Send a no-reply channel reminder DM.;false;guild;guild;slash;[
-  {
-    "type": 6,
-    "name": "user",
-    "description": "User",
-    "required": true
-  }
-]]
-`
-}];
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
 
-// Manual registration (guild-only; run once if the ready handler did not register):
-// $createApplicationCommand[859910344393883710;noreply;Send a no-reply channel reminder DM.;false;guild;guild;slash;[
-//   {
-//     "type": 6,
-//     "name": "user",
-//     "description": "User",
-//     "required": true
-//   }
-// ]]
+const VOLUNTEER_GUILD_ID = "859910344393883710";
+const CONTRIBUTOR_CATEGORY_ID = "1356279309169328158";
+const STAFF_ROLE_ID = "1519016533005832332";
+
+function disabledReplyRow() {
+  return new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setLabel("Don't reply — bot can't read.")
+      .setStyle(ButtonStyle.Secondary)
+      .setCustomId("unimportantcustomid2")
+      .setDisabled(true)
+  );
+}
+
+module.exports = {
+  slash: { name: "noreply" },
+  info: {
+    description: "Send a no-reply channel reminder DM to a user.",
+    perms: ["`Role: 1519016533005832332`"],
+  },
+  async execute(ctx) {
+    if (ctx.guild?.id !== VOLUNTEER_GUILD_ID) {
+      return ctx.reply("You tried.", { flags: 64 });
+    }
+
+    if (ctx.channel?.parentId !== CONTRIBUTOR_CATEGORY_ID) {
+      const embed = new EmbedBuilder()
+        .setTitle("Error")
+        .setColor("#FF0000")
+        .setDescription("This command cannot be used here!");
+      return ctx.reply({ embeds: [embed] }, { flags: 64 });
+    }
+
+    if (!ctx.member?.roles?.cache?.has(STAFF_ROLE_ID)) {
+      const embed = new EmbedBuilder()
+        .setTitle("Missing Permissions")
+        .setColor("#FF0000")
+        .setDescription(`You need the <@&${STAFF_ROLE_ID}> role to run this command.`);
+      return ctx.reply({ embeds: [embed] }, { flags: 64 });
+    }
+
+    const user = ctx.options.getUser("user");
+
+    await ctx.defer({ flags: 64 });
+
+    const dmEmbed = new EmbedBuilder()
+      .setTitle(`Message from ${ctx.author.username}`)
+      .setColor("#FFFFFF")
+      .setDescription(`Please check <#${ctx.channelId}> as soon as you can!\nSent from ${ctx.guild.name}`);
+
+    let sent = false;
+    try {
+      const target = await ctx.client.users.fetch(user.id);
+      await target.send({ embeds: [dmEmbed], components: [disabledReplyRow()] });
+      sent = true;
+    } catch {
+      sent = false;
+    }
+
+    if (sent) {
+      const embed = new EmbedBuilder()
+        .setTitle("Success!")
+        .setColor("#00FF00")
+        .setDescription(`You have sent <@!${user.id}> a DM message`);
+      return ctx.reply({ embeds: [embed] }, { flags: 64 });
+    }
+
+    const embed = new EmbedBuilder()
+      .setTitle("Failed!")
+      .setColor("Red")
+      .setDescription(`<@!${user.id}> does not have their DMs open.`);
+    return ctx.reply({ embeds: [embed] });
+  },
+};

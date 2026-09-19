@@ -1,39 +1,87 @@
-module.exports = [{
-    name: "guess-the-pokemon",
-    info: {
-      description: "Starts a game of guessing a Pokemon character.",
-      perms: ["`SendMessages`"]
-    },
-    aliases: "gtp",
-    code: `$awaitMessages[$channelID;$authorID;60s;everything;gtpawaited;{execute:gtptimeout}]
-$editMessage[$get[id];{attachment:question-image.png:$getObjectProperty[api;data.questionImage]}
-{newEmbed:{author:$username:$authorAvatar}{title: Who's the Pokemon?}{field:Types:$djsEval[$getObjectProperty[api;data.types].join(", ");true]:true}{field:Abilities:$djsEval[$getObjectProperty[api;data.abilities].join(", ");true]:true}{image:attachment://question-image.png}{color:$getVar[embedcolor]}}]
+"use strict";
 
-$createObject[api;$nonEscape[$get[jsonresponse]]]
-$let[id;$sendMessage[Please wait...;true]]
-$onlyIf[$isValidObject[$nonEscape[$get[jsonresponse]]]==true;Unable to fetch Pokemon data.]
-$let[jsonresponse;$httpRequest[https://api.gamecord.xyz/pokemon;GET;;;dead]]
-$cooldown[5s; Slow down! Don't spam the command!
-    Time remaining: <t:$truncate[$divide[$sum[$getCooldownTime[5s;user;guess-the-pokemon;$authorID];$dateStamp];1000]]:R>]
-`
-}, 
-{
-name: "gtptimeout", 
-type: "awaited", 
-code: `
-$editMessage[$get[id];Better luck next time! It was a $getObjectProperty[api;data.name].]
-`
-}, 
-{
-name: "gtpawaited", 
-type: "awaited", 
-$if: "old", 
-code: `
-$if[$message[1]==$getObjectProperty[api;data.name]]
-$editMessage[$get[id];You guessed it right! It was a $getObjectProperty[api;data.name]. {attachment:answer-image.png:$getObjectProperty[api;data.answerImage]}
-{newEmbed:{author:$username:$authorAvatar}{title: Who's the Pokemon?}{field:Types:$djsEval[$getObjectProperty[api;data.types].join(", ");true]:true}{field:Abilities:$djsEval[$getObjectProperty[api;data.abilities].join(", ");true]:true}{image:attachment://answer-image.png}{color:$getVar[embedcolor]}}]
-$else
-$editMessage[$get[id];Better luck next time! It was a $getObjectProperty[api;data.name].]
-$endif
-`
-}]
+const { AttachmentBuilder, EmbedBuilder } = require("discord.js");
+const { httpJson } = require("../../../src/utils/http");
+
+const API_URL = "https://api.gamecord.xyz/pokemon";
+
+function pokemonEmbed(ctx, pokemon, imageName) {
+  return new EmbedBuilder()
+    .setAuthor({
+      name: ctx.author.username,
+      iconURL: ctx.author.displayAvatarURL({ size: 256, forceStatic: false }),
+    })
+    .setTitle("Who's the Pokemon?")
+    .addFields(
+      { name: "Types", value: (pokemon.types ?? []).join(", "), inline: true },
+      { name: "Abilities", value: (pokemon.abilities ?? []).join(", "), inline: true }
+    )
+    .setImage(`attachment://${imageName}`)
+    .setColor(ctx.getVar("embedcolor"));
+}
+
+async function revealAnswer(ctx, message, pokemon, content, imageName, imageUrl) {
+  await message
+    .edit({
+      content,
+      embeds: imageName ? [pokemonEmbed(ctx, pokemon, imageName)] : [],
+      files: imageName ? [new AttachmentBuilder(imageUrl, { name: imageName })] : [],
+      attachments: [],
+    })
+    .catch(() => {});
+}
+
+module.exports = {
+  name: "guess-the-pokemon",
+  aliases: "gtp",
+  info: {
+    description: "Starts a game of guessing a Pokemon character.",
+    perms: ["`SendMessages`"],
+  },
+  cooldown: {
+    time: 5000,
+    message: "Slow down! Don't spam the command!\nTime remaining: %timestamp%",
+  },
+  async execute(ctx) {
+    const response = await httpJson(API_URL);
+    const pokemon = response?.data;
+    if (!pokemon || typeof pokemon !== "object") {
+      return ctx.send("Unable to fetch Pokemon data.");
+    }
+
+    const message = await ctx.send("Please wait...");
+
+    await message.edit({
+      content: "",
+      embeds: [pokemonEmbed(ctx, pokemon, "question-image.png")],
+      files: [new AttachmentBuilder(pokemon.questionImage, { name: "question-image.png" })],
+    });
+
+    const collector = ctx.channel.createMessageCollector({
+      filter: (msg) => msg.author.id === ctx.authorId && !msg.author.bot,
+      time: 60000,
+    });
+
+    collector.on("collect", async (msg) => {
+      const guess = msg.content.trim().split(/\s+/)[0];
+      if (guess === pokemon.name) {
+        collector.stop("guessed");
+        await revealAnswer(
+          ctx,
+          message,
+          pokemon,
+          `You guessed it right! It was a ${pokemon.name}.`,
+          "answer-image.png",
+          pokemon.answerImage
+        );
+        return;
+      }
+      await revealAnswer(ctx, message, pokemon, `Better luck next time! It was a ${pokemon.name}.`);
+    });
+
+    collector.on("end", async (_collected, reason) => {
+      if (reason === "guessed") return;
+      await revealAnswer(ctx, message, pokemon, `Better luck next time! It was a ${pokemon.name}.`);
+    });
+  },
+};

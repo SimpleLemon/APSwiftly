@@ -1,43 +1,68 @@
-module.exports = {
-	name: "denied",
-    type: "interaction",
-    prototype: "slash",
-    info: {
-    description: "Send denial message to user."
-    },
-	code:`
- $interactionFollowUp[{newEmbed:{title:Success!}{description:You have sent <@!$slashOption[user]> the denial message}{color:00FF00}}]
-$sendDm[{newEmbed:{title:Dear $slashOption[name],}{description:**Thank you for applying to the APStudy Contributor Program**
-We regret to inform you that your application was not selected.
-\`\`\`Reason: $slashOption[reason]\`\`\`If anything changes, we will let you know.
+"use strict";
 
-Sincerely,
-APStudy Contributor Team}{color:White}}
-{actionRow:{button:Don't reply \— bot can't read.:secondary:unimportantcustomid2:true}};$slashOption[user]]
-$onlyIf[$hasPerms[$guildID;$authorID;administrator]==true;You are missing \`Administrator\` permissions needed to run this command!
-{ephemeral}
-{interaction}]
-$interactionDefer[true]
-`
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, PermissionFlagsBits } = require("discord.js");
+
+function disabledReplyRow() {
+  return new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setLabel("Don't reply — bot can't read.")
+      .setStyle(ButtonStyle.Secondary)
+      .setCustomId("unimportantcustomid2")
+      .setDisabled(true)
+  );
 }
 
-// $createApplicationCommand[global;denied;Send denial message to user.;Administrator;guild,user;guild;slash;[
-//   {
-//     "type": 6,
-//     "name": "user",
-//     "description": "User",
-//     "required": true
-//   },
-//   {
-//     "type": 3,
-//     "name": "name",
-//     "description": "Applicant's Name",
-//     "required": true
-//   },
-//   {
-//     "type": 3,
-//     "name": "reason",
-//     "description": "Reason for Denial",
-//     "required": true
-//   }
-// ]]
+module.exports = {
+  slash: { name: "denied" },
+  info: {
+    description: "Send denial message to user.",
+  },
+  async execute(ctx) {
+    if (!ctx.member?.permissions?.has(PermissionFlagsBits.Administrator)) {
+      return ctx.reply("You are missing `Administrator` permissions needed to run this command!", { flags: 64 });
+    }
+
+    const user = ctx.options.getUser("user");
+    const name = ctx.options.getString("name");
+    const reason = ctx.options.getString("reason");
+
+    await ctx.defer({ flags: 64 });
+
+    const dmEmbed = new EmbedBuilder()
+      .setTitle(`Dear ${name},`)
+      .setDescription(
+        [
+          "**Thank you for applying to the APStudy Contributor Program**",
+          "We regret to inform you that your application was not selected.",
+          `\`\`\`Reason: ${reason}\`\`\`If anything changes, we will let you know.`,
+          "",
+          "Sincerely,",
+          "APStudy Contributor Team",
+        ].join("\n")
+      )
+      .setColor("#FFFFFF");
+
+    let sent = false;
+    try {
+      const target = await ctx.client.users.fetch(user.id);
+      await target.send({ embeds: [dmEmbed], components: [disabledReplyRow()] });
+      sent = true;
+    } catch {
+      sent = false;
+    }
+
+    if (!sent) {
+      const embed = new EmbedBuilder()
+        .setTitle("Failed!")
+        .setColor("Red")
+        .setDescription(`<@!${user.id}> does not have their DMs open.`);
+      return ctx.followUp({ embeds: [embed] });
+    }
+
+    const embed = new EmbedBuilder()
+      .setTitle("Success!")
+      .setColor("#00FF00")
+      .setDescription(`You have sent <@!${user.id}> the denial message`);
+    await ctx.followUp({ embeds: [embed] });
+  },
+};

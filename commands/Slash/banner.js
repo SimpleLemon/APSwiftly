@@ -1,27 +1,32 @@
+"use strict";
+
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
+
 module.exports = {
-    name: "banner",
-    type: "interaction",
-    prototype: "slash",
-    info: {
-        description: "Returns your/users profile banner."
-    },
-    code: `$interactionReply[{newEmbed:{title:$get[username]'s Banner}{image:$userBanner[$get[user]]}{color:$getVar[embedcolor]}}
+  slash: { name: "banner" },
+  info: {
+    description: "Returns your/users profile banner.",
+  },
+  async execute(ctx) {
 
-    {actionRow:{button:Download:5:$nonEscape[$userBanner[$get[user]]]:false}};all;true]
+    await ctx.defer({ flags: 64 });
+    const selected = ctx.options.getUser("user") ?? ctx.author;
+    const user = await ctx.client.users.fetch(selected.id, { force: true });
+    const url = user.bannerURL({ extension: "png", size: 4096 });
 
-    $onlyIf[$userBanner[$get[user]]!=null;This user does not have a banner attached to their profile.
-    {ephemeral}
-    {interaction}
-    ]
+    if (!url) {
+      return ctx.reply("This user does not have a banner attached to their profile.", { flags: 64 });
+    }
 
-    $let[username;$advancedReplaceText[$checkCondition[$hasUserTag[$get[user]]==false];true;$username[$get[user]];false;$userTag[$get[user]]]]
-    $let[user;$advancedReplaceText[$checkCondition[$slashOption[user]==];true;$authorID;false;$slashOption[user]]]
+    const embed = new EmbedBuilder()
+      .setTitle(`${user.username}'s Banner`)
+      .setImage(url)
+      .setColor(ctx.getVar("embedcolor"));
 
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder().setLabel("Download").setStyle(ButtonStyle.Link).setURL(url)
+    );
 
-
-    $onlyIf[$getVar[userapps]==true;User apps are currently disabled.
-    {ephemeral}
-    {interaction}
-    ]
-    `
-}
+    await ctx.reply({ embeds: [embed], components: [row] }, { flags: 64 });
+  },
+};

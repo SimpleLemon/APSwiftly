@@ -1,5 +1,5 @@
 [Unit]
-Description=APSwiftly Discord bot (aoi.js)
+Description=APSwiftly Discord bot (discord.js + SQLite)
 After=network.target
 
 [Service]

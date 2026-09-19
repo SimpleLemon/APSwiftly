@@ -1,14 +1,58 @@
+"use strict";
+
+const axios = require("axios");
+const { AttachmentBuilder, PermissionFlagsBits } = require("discord.js");
+
+const CHROME_UA =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";
+
+async function isImageLink(url) {
+  try {
+    const response = await axios.get(url, {
+      timeout: 5000,
+      responseType: "stream",
+      headers: { "User-Agent": CHROME_UA },
+    });
+    const contentType = String(response.headers["content-type"] ?? "");
+    response.data?.destroy?.();
+    return contentType.startsWith("image");
+  } catch {
+    return false;
+  }
+}
+
+function avatarLink(user) {
+  return user
+    .displayAvatarURL({ size: 4096 })
+    .replaceAll(".webp", ".png")
+    .replaceAll(".gif", ".png");
+}
+
 module.exports = {
-    name: "nokia",
-    info: {
-        description: "Puts your/user's profile picture on a nokia phone.",
-        perms: ["`SendMessages`", "`AttachFiles`"]
-    },
-    code: `$attachment[$get[apilink];nokia.png;URL]
-$onlyIf[$IsValidImageLink[$get[apilink]]==true;It looks like there're issues with processing the image. Please, try again later if possible.]
-$onlyIf[$hasPermsInChannel[$channelID;$clientID;attachfiles]==true;I must have \`AttachFiles\` permission in order to proceed in this channel. Please, grant me the permission and try again.]
-$let[apilink;https://api.popcat.xyz/nokia?image=$get[pfphandler]]
-$let[pfphandler;$advancedReplaceText[$userAvatar[$mentioned[1;true]];.webp;.png;.gif;.png]]
-$cooldown[5s; Slow down! Don't spam the command!
-Time remaining: <t:$truncate[$divide[$sum[$getCooldownTime[5s;user;nokia;$authorID];$dateStamp];1000]]:R>]`
+  name: "nokia",
+  info: {
+    description: "Puts your/user's profile picture on a nokia phone.",
+    perms: ["`SendMessages`", "`AttachFiles`"],
+  },
+  cooldown: {
+    time: 5000,
+    message: "Slow down! Don't spam the command!\nTime remaining: %timestamp%",
+  },
+  async execute(ctx) {
+    const user = ctx.mentioned ?? ctx.author;
+    const apiLink = `https://api.popcat.xyz/nokia?image=${avatarLink(user)}`;
+
+    const permissions = ctx.channel?.permissionsFor(ctx.client.user);
+    if (!permissions?.has(PermissionFlagsBits.AttachFiles)) {
+      return ctx.send(
+        "I must have `AttachFiles` permission in order to proceed in this channel. Please, grant me the permission and try again."
+      );
     }
+
+    if (!(await isImageLink(apiLink))) {
+      return ctx.send("It looks like there're issues with processing the image. Please, try again later if possible.");
+    }
+
+    await ctx.send({ files: [new AttachmentBuilder(apiLink, { name: "nokia.png" })] });
+  },
+};

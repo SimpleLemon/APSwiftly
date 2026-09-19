@@ -1,0 +1,2573 @@
+{
+  "generatedAt": "2026-09-19T15:11:02.904Z",
+  "source": "aoi.js v6 command set (read-only snapshot)",
+  "totalDefinitions": 329,
+  "counts": {
+    "prefix": 91,
+    "slash": 19,
+    "components": 152,
+    "events": 18,
+    "timeouts": 2,
+    "awaited": 43
+  },
+  "definitions": [
+    {
+      "file": "Automation/Awaited/autolist-types.js",
+      "name": "autoListText",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/autolist-types.js",
+      "name": "autoListServers",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/autolist-types.js",
+      "name": "autoListChannels",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/autolist-types.js",
+      "name": "autoListCategories",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/autolist-types.js",
+      "name": "autoListRoles",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/game-timeouts.js",
+      "name": "rpstimeout",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/game-timeouts.js",
+      "name": "ftftimeout",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/game-timeouts.js",
+      "name": "coinfliptimeout",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/leavemessages.js",
+      "name": "leavetextmodetest",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/leavemessages.js",
+      "name": "leaveembedmodetest",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/leavemessages.js",
+      "name": "leavetextmode",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/leavemessages.js",
+      "name": "leaveembedmode",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/levelingresets.js",
+      "name": "resetonleave",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/levelingresets.js",
+      "name": "resetleveling",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/messageditlog-modes.js",
+      "name": "msgeditlogfilemode",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/messageditlog-modes.js",
+      "name": "msgeditlogembedmode",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/pre-release-modedecider.js",
+      "name": "Set Pre-release mode",
+      "type": "ready",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/pre-release-modedecider.js",
+      "name": "Enable-pre-release",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/pre-release-modedecider.js",
+      "name": "Disable-pre-release",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/welcomermessages.js",
+      "name": "welcomertextmodetest",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/welcomermessages.js",
+      "name": "welcomerembedmodetest",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/welcomermessages.js",
+      "name": "welcomertextmode",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Awaited/welcomermessages.js",
+      "name": "welcomerembedmode",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Events/Bot Invitation Message.js",
+      "name": "Bot Invitation Message",
+      "type": "guildJoin",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Events/Bot Invitation Message.js",
+      "name": "invitationgreeting",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Events/Bot Invitation Message.js",
+      "name": "failedmemberrequirement",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Events/error-logs.js",
+      "name": "Error logger",
+      "type": "functionError",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Events/integration-logs.js",
+      "name": "Integration Logs",
+      "type": "join",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Events/member-logs.js",
+      "name": "Welcomer message",
+      "type": "join",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Events/member-logs.js",
+      "name": "Leave message",
+      "type": "leave",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Events/member-logs.js",
+      "name": "Member Nickname Update",
+      "type": "memberUpdate",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Events/member-logs.js",
+      "name": "Member Name Update",
+      "type": "memberUpdate",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Events/member-logs.js",
+      "name": "Member Role Added",
+      "type": "memberUpdate",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Events/member-logs.js",
+      "name": "Member Role Removed",
+      "type": "memberUpdate",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Events/message-logs.js",
+      "name": "Message delete Logs",
+      "type": "messageDelete",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Events/message-logs.js",
+      "name": "Message update Logs",
+      "type": "messageUpdate",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Events/moderation-logs.js",
+      "name": "Ban Logs",
+      "type": "banAdd",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Events/moderation-logs.js",
+      "name": "Un-Ban Logs",
+      "type": "banRemove",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/coinflip-interactions.js",
+      "name": "headsinteraction",
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null,
+      "customIds": [
+        "headsinteraction",
+        "headsbutton",
+        "tailsbutton"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons/coinflip-interactions.js",
+      "name": "tailsinteraction",
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null,
+      "customIds": [
+        "tailsinteraction",
+        "headsbutton",
+        "tailsbutton"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons/credits-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/credits-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/credits-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/findtheflag-interactions.js",
+      "name": "ftfresults1",
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null,
+      "customIds": [
+        "ftfresults1",
+        "ftf1",
+        "ftf2",
+        "ftf3"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons/findtheflag-interactions.js",
+      "name": "ftfresults2",
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null,
+      "customIds": [
+        "ftfresults2",
+        "ftf1",
+        "ftf2",
+        "ftf3"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons/findtheflag-interactions.js",
+      "name": "ftfresults3",
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null,
+      "customIds": [
+        "ftfresults3",
+        "ftf1",
+        "ftf2",
+        "ftf3"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons/rps-oneplayer-interactions.js",
+      "name": "rpsgameresults1",
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null,
+      "customIds": [
+        "rpsgameresults1",
+        "rpsrockbutton",
+        "rpspaperbutton",
+        "rpsscissorsbutton"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons/rps-oneplayer-interactions.js",
+      "name": "rpsgameresults2",
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null,
+      "customIds": [
+        "rpsgameresults2",
+        "rpsrockbutton",
+        "rpspaperbutton",
+        "rpsscissorsbutton"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons/rps-oneplayer-interactions.js",
+      "name": "rpsgameresults3",
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null,
+      "customIds": [
+        "rpsgameresults3",
+        "rpsrockbutton",
+        "rpspaperbutton",
+        "rpsscissorsbutton"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons/shutdown-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/shutdown-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/userinfo-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/userinfo-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/version-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/version-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/version-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/version-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/viewbuttons.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/viewbuttons.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/viewbuttons.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/viewbuttons.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/viewbuttons.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/viewbuttons.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons/wyr-interactions.js",
+      "name": "wyr1-votebutton",
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null,
+      "customIds": [
+        "wyr1-votebutton",
+        "wyr2-votebutton"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons/wyr-interactions.js",
+      "name": "wyr2-votebutton",
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null,
+      "customIds": [
+        "wyr2-votebutton",
+        "wyr1-votebutton"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": "embedcolorsetresult",
+      "type": "interaction",
+      "prototype": "modal",
+      "aliases": null,
+      "customIds": [
+        "embedcolorsetresult",
+        "developermainpage",
+        "setbotembedcolor",
+        "embedcolorpreview",
+        "resetembedcolor"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": "memberrequirementsetresult",
+      "type": "interaction",
+      "prototype": "modal",
+      "aliases": null,
+      "customIds": [
+        "memberrequirementsetresult",
+        "developermainpage",
+        "setmemberrequirement",
+        "resetmemberrequirement"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/dev-panel-menu.js",
+      "name": "leaveservermodalresult",
+      "type": "interaction",
+      "prototype": "modal",
+      "aliases": null,
+      "customIds": [
+        "leaveservermodalresult"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/games-settings.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/games-settings.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/games-settings.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/games-settings.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/games-settings.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/games-settings.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/games-settings.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/games-settings.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/games-settings.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/games-settings.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/games-settings.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/helpmenu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/helpmenu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/helpmenu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/helpmenu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/helpmenu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/helpmenu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/helpmenu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/helpmenu.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leave-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leave-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leave-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leave-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leave-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leave-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leave-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leave-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leave-interactions.js",
+      "name": "leavetextmodal",
+      "type": "interaction",
+      "prototype": "modal",
+      "aliases": null,
+      "customIds": [
+        "leavetextmodal"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leave-interactions.js",
+      "name": "leaveembedmodal",
+      "type": "interaction",
+      "prototype": "modal",
+      "aliases": null,
+      "customIds": [
+        "leaveembedmodal"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leave-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leave-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leave-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leave-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": "levelingresetconfirm",
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null,
+      "customIds": [
+        "levelingresetconfirm"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": "levelingresetdeny",
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null,
+      "customIds": [
+        "levelingresetdeny"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": "levelingsetmsgresult",
+      "type": "interaction",
+      "prototype": "modal",
+      "aliases": null,
+      "customIds": [
+        "levelingsetmsgresult"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/leveling-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/logs-interaction.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/logs-interaction.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/logs-interaction.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/logs-interaction.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/logs-interaction.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/logs-interaction.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/logs-interaction.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/logs-interaction.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/logs-interaction.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/logs-interaction.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/logs-interaction.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/logs-interaction.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/logs-interaction.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/settingsmenu-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/settingsmenu-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/settingsmenu-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/settingsmenu-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/settingsmenu-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/settingsmenu-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/welcomer-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/welcomer-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/welcomer-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/welcomer-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/welcomer-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "selectMenu",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/welcomer-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/welcomer-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/welcomer-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/welcomer-interactions.js",
+      "name": "welcomertextmodal",
+      "type": "interaction",
+      "prototype": "modal",
+      "aliases": null,
+      "customIds": [
+        "welcomertextmodal"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/welcomer-interactions.js",
+      "name": "welcomerembedmodal",
+      "type": "interaction",
+      "prototype": "modal",
+      "aliases": null,
+      "customIds": [
+        "welcomerembedmodal"
+      ]
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/welcomer-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/welcomer-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/welcomer-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Interactions/Buttons & SelectMenus/welcomer-interactions.js",
+      "name": null,
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null
+    },
+    {
+      "file": "Automation/Others/Bot specific/auto respond.js",
+      "name": "$alwaysExecute",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Others/Bot specific/startup-messages.js",
+      "name": "Startup Message (Console)",
+      "type": "ready",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Others/Bot specific/startup-messages.js",
+      "name": "Startup Message (Channel)",
+      "type": "ready",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Others/Bot specific/startup-messages.js",
+      "name": "showdevwarning",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Others/Systems/levelup.js",
+      "name": "$alwaysExecute",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Others/Systems/levelup.js",
+      "name": "$alwaysExecute",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Others/Systems/resetonleavetrigger.js",
+      "name": "(Leveling) Reset on Leave trigger",
+      "type": "leave",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Others/Systems/userappsupport.js",
+      "name": "Userapps support",
+      "type": "ready",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Automation/Others/Systems/userappsupport.js",
+      "name": "createuserapps",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Developer/dev-panel.js",
+      "name": "dev-panel",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "developer-panel",
+        "dev-settings",
+        "devpanel"
+      ]
+    },
+    {
+      "file": "Developer/eval.js",
+      "name": "eval",
+      "type": "command",
+      "prototype": null,
+      "aliases": "e"
+    },
+    {
+      "file": "Developer/exec.js",
+      "name": "execute",
+      "type": "command",
+      "prototype": null,
+      "aliases": "exec"
+    },
+    {
+      "file": "Developer/jseval.js",
+      "name": "jseval",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "jse",
+        "djseval",
+        "djse"
+      ]
+    },
+    {
+      "file": "Developer/readfile.js",
+      "name": "readfile",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "viewfile",
+        "readcontent",
+        "viewcontent"
+      ]
+    },
+    {
+      "file": "Developer/refreshslash.js",
+      "name": "refreshslash",
+      "type": "command",
+      "prototype": null,
+      "aliases": "restartslash"
+    },
+    {
+      "file": "Developer/serverlist.js",
+      "name": "serverlist",
+      "type": "command",
+      "prototype": null,
+      "aliases": "guildlist"
+    },
+    {
+      "file": "Developer/setcustomstatus.js",
+      "name": "setcustomstatus",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "scs",
+        "customstatus"
+      ]
+    },
+    {
+      "file": "Developer/shutdown.js",
+      "name": "shutdown",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Developer/shutdown.js",
+      "name": "shutdownbyforce",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Developer/shutdown.js",
+      "name": "shutdownwithconfirmation",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Developer/update.js",
+      "name": "update",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "restartcmds",
+        "reloadcmds",
+        "reload"
+      ]
+    },
+    {
+      "file": "Entertainment/games/2048.js",
+      "name": "2048",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/games/c4.js",
+      "name": "connect4",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "c4",
+        "connectfour"
+      ]
+    },
+    {
+      "file": "Entertainment/games/coinflip.js",
+      "name": "coinflip",
+      "type": "command",
+      "prototype": null,
+      "aliases": "cf"
+    },
+    {
+      "file": "Entertainment/games/findemoji.js",
+      "name": "findemoji",
+      "type": "command",
+      "prototype": null,
+      "aliases": "find-emoji"
+    },
+    {
+      "file": "Entertainment/games/flood.js",
+      "name": "flood",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/games/flood.js",
+      "name": "floodstart",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/games/flood.js",
+      "name": "floodsettings",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/games/ftf.js",
+      "name": "findtheflag",
+      "type": "command",
+      "prototype": null,
+      "aliases": "ftf"
+    },
+    {
+      "file": "Entertainment/games/gtp.js",
+      "name": "guess-the-pokemon",
+      "type": "command",
+      "prototype": null,
+      "aliases": "gtp"
+    },
+    {
+      "file": "Entertainment/games/gtp.js",
+      "name": "gtptimeout",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/games/gtp.js",
+      "name": "gtpawaited",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/games/hangman.js",
+      "name": "hangman",
+      "type": "command",
+      "prototype": null,
+      "aliases": "hm"
+    },
+    {
+      "file": "Entertainment/games/hangman.js",
+      "name": "hangmanstart",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/games/hangman.js",
+      "name": "hangmansettings",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/games/matchpairs.js",
+      "name": "match-pairs",
+      "type": "command",
+      "prototype": null,
+      "aliases": "matchpairs"
+    },
+    {
+      "file": "Entertainment/games/minesweeper.js",
+      "name": "minesweeper",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/games/rps.js",
+      "name": "rock-paper-scissors",
+      "type": "command",
+      "prototype": null,
+      "aliases": "rps"
+    },
+    {
+      "file": "Entertainment/games/rps.js",
+      "name": "rpsoneplayer",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/games/rps.js",
+      "name": "rpstwoplayer",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/games/snake.js",
+      "name": "snake",
+      "type": "command",
+      "prototype": null,
+      "aliases": "snek"
+    },
+    {
+      "file": "Entertainment/games/trivia.js",
+      "name": "trivia",
+      "type": "command",
+      "prototype": null,
+      "aliases": "triv"
+    },
+    {
+      "file": "Entertainment/games/trivia.js",
+      "name": "triviastart",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/games/trivia.js",
+      "name": "triviasettings",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/games/ttt.js",
+      "name": "tictactoe",
+      "type": "command",
+      "prototype": null,
+      "aliases": "ttt"
+    },
+    {
+      "file": "Entertainment/games/wordle.js",
+      "name": "wordle",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/games/wyr.js",
+      "name": "would-you-rather",
+      "type": "command",
+      "prototype": null,
+      "aliases": "wyr"
+    },
+    {
+      "file": "Entertainment/images/ad.js",
+      "name": "ad",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/images/clown.js",
+      "name": "clown",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/images/comment.js",
+      "name": "comment",
+      "type": "command",
+      "prototype": null,
+      "aliases": "ytcomment"
+    },
+    {
+      "file": "Entertainment/images/drip.js",
+      "name": "drip",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/images/gun.js",
+      "name": "gun",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/images/invert.js",
+      "name": "invert",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/images/jail.js",
+      "name": "jail",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/images/nokia.js",
+      "name": "nokia",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/images/wanted.js",
+      "name": "wanted",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/images/whereiseveryone.js",
+      "name": "whereiseveryone",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/text/8ball.js",
+      "name": "8ball",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/text/clap.js",
+      "name": "clap",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/text/clap.js",
+      "name": "spaceclap",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/text/clap.js",
+      "name": "nonspaceclap",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/text/fact.js",
+      "name": "fact",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/text/howgamer.js",
+      "name": "howgamer",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/text/joke.js",
+      "name": "joke",
+      "type": "command",
+      "prototype": null,
+      "aliases": "jokes"
+    },
+    {
+      "file": "Entertainment/text/joke.js",
+      "name": "twopart",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/text/joke.js",
+      "name": "onepart",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/text/lulcat.js",
+      "name": "lulcat",
+      "type": "command",
+      "prototype": null,
+      "aliases": "lolcat"
+    },
+    {
+      "file": "Entertainment/text/mock.js",
+      "name": "mock",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/text/owoify.js",
+      "name": "owoify",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/text/randomtopic.js",
+      "name": "randomtopic",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "newtopic",
+        "topic"
+      ]
+    },
+    {
+      "file": "Entertainment/text/reverse.js",
+      "name": "reverse",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/text/say.js",
+      "name": "say",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "talk",
+        "repeat"
+      ]
+    },
+    {
+      "file": "Entertainment/text/say.js",
+      "name": "awaitedsay",
+      "type": "awaited",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/text/whoasked.js",
+      "name": "whoasked",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Entertainment/text/yesorno.js",
+      "name": "yesorno",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Info/serverinfo.js",
+      "name": "serverinfo",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "server",
+        "si",
+        "guild",
+        "guildinfo"
+      ]
+    },
+    {
+      "file": "Info/user.js",
+      "name": "user",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "userinfo",
+        "user-info"
+      ]
+    },
+    {
+      "file": "Main/commandinfo.js",
+      "name": "commandinfo",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "cmdinfo",
+        "ci"
+      ]
+    },
+    {
+      "file": "Main/help.js",
+      "name": "help",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Main/invite.js",
+      "name": "invite",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Main/perms.js",
+      "name": "perms",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Main/ping.js",
+      "name": "ping",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Main/settings.js",
+      "name": "settings",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "panel",
+        "guildsettings",
+        "serversettings"
+      ]
+    },
+    {
+      "file": "Main/stats.js",
+      "name": "stats",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "botstats",
+        "info"
+      ]
+    },
+    {
+      "file": "Misc/avatar.js",
+      "name": "avatar",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "av",
+        "userav"
+      ]
+    },
+    {
+      "file": "Misc/banner.js",
+      "name": "banner",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "userbanner",
+        "usrbanner"
+      ]
+    },
+    {
+      "file": "Misc/randomcolor.js",
+      "name": "randomcolor",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "randomhex",
+        "randomrgb"
+      ]
+    },
+    {
+      "file": "Moderation/slash-ban.js",
+      "name": "ban",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "ban",
+        "unimportantcustomid2",
+        "https"
+      ]
+    },
+    {
+      "file": "Moderation/slash-kick.js",
+      "name": "kick",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "kick",
+        "unimportantcustomid2"
+      ]
+    },
+    {
+      "file": "Slash/111create.js",
+      "name": "acreate",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Slash/8ball.js",
+      "name": "8ball",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "8ball"
+      ]
+    },
+    {
+      "file": "Slash/ai.js",
+      "name": "ai",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "ai"
+      ]
+    },
+    {
+      "file": "Slash/avatar.js",
+      "name": "avatar",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "avatar"
+      ]
+    },
+    {
+      "file": "Slash/banner.js",
+      "name": "banner",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "banner"
+      ]
+    },
+    {
+      "file": "Slash/denied.js",
+      "name": "denied",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "denied",
+        "unimportantcustomid2"
+      ]
+    },
+    {
+      "file": "Slash/echo.js",
+      "name": "echo",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "echo"
+      ]
+    },
+    {
+      "file": "Slash/invite.js",
+      "name": "invite",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "invite"
+      ]
+    },
+    {
+      "file": "Slash/owoify.js",
+      "name": "owoify",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "owoify"
+      ]
+    },
+    {
+      "file": "Slash/ping.js",
+      "name": "ping",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "ping"
+      ]
+    },
+    {
+      "file": "Slash/reload.js",
+      "name": "reload",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "reload",
+        "unimportantcustomid"
+      ]
+    },
+    {
+      "file": "Slash/reverse.js",
+      "name": "reverse",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "reverse"
+      ]
+    },
+    {
+      "file": "Slash/senddm.js",
+      "name": "senddm",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "senddm",
+        "unimportantcustomid2"
+      ]
+    },
+    {
+      "file": "Slash/slash-addhours.js",
+      "name": "addhours",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "addhours",
+        "unimportantcustomid2"
+      ]
+    },
+    {
+      "file": "Slash/slash-latex.js",
+      "name": "latex",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "latex"
+      ]
+    },
+    {
+      "file": "Slash/terminal.js",
+      "name": "terminal",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "terminal"
+      ]
+    },
+    {
+      "file": "Util/leave.js",
+      "name": "leave",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Util/leveling.js",
+      "name": "leveling",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Util/logs.js",
+      "name": "logs",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "logging",
+        "logs-setup",
+        "setup-logs",
+        "logging-setup"
+      ]
+    },
+    {
+      "file": "Util/poll-commands.js",
+      "name": "poll-set",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "set-poll",
+        "setpoll",
+        "pollset"
+      ]
+    },
+    {
+      "file": "Util/poll-commands.js",
+      "name": "poll-reset",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "reset-pollchannel",
+        "resetpoll",
+        "reset-poll",
+        "pollreset"
+      ]
+    },
+    {
+      "file": "Util/poll-commands.js",
+      "name": "poll",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "createpoll",
+        "startpoll"
+      ]
+    },
+    {
+      "file": "Util/prefix-commands.js",
+      "name": "prefix",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Util/prefix-commands.js",
+      "name": "prefix-reset",
+      "type": "command",
+      "prototype": null,
+      "aliases": "reset-prefix"
+    },
+    {
+      "file": "Util/remind.js",
+      "name": "remind",
+      "type": "command",
+      "prototype": null,
+      "aliases": "rem"
+    },
+    {
+      "file": "Util/remind.js",
+      "name": "remi",
+      "type": "timeout",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Util/suggestion-commands.js",
+      "name": "suggest-set",
+      "type": "command",
+      "prototype": null,
+      "aliases": "suggestion-set"
+    },
+    {
+      "file": "Util/suggestion-commands.js",
+      "name": "suggest-reset",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Util/suggestion-commands.js",
+      "name": "suggest",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "Util/webscreenshot.js",
+      "name": "webscreenshot",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "screenshot",
+        "webss",
+        "websitess",
+        "ss"
+      ]
+    },
+    {
+      "file": "Util/welcomer.js",
+      "name": "welcomer",
+      "type": "command",
+      "prototype": null,
+      "aliases": "welcome"
+    },
+    {
+      "file": "zAPStudy Specific/archive.js",
+      "name": "archive",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "zAPStudy Specific/bypass.js",
+      "name": "bypass",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "zAPStudy Specific/cheater.js",
+      "name": "cheater",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "zAPStudy Specific/checkin.js",
+      "name": "checkin",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "zAPStudy Specific/checkin.js",
+      "name": "checkinTimeout",
+      "type": "timeout",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "zAPStudy Specific/checkin.js",
+      "name": "cancelcheckin",
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null,
+      "customIds": [
+        "cancelcheckin"
+      ]
+    },
+    {
+      "file": "zAPStudy Specific/checkin.js",
+      "name": "earlycheckin",
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null,
+      "customIds": [
+        "earlycheckin"
+      ]
+    },
+    {
+      "file": "zAPStudy Specific/contributor.js",
+      "name": "contributor",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "zAPStudy Specific/grammar.js",
+      "name": "grammar",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "zAPStudy Specific/join.js",
+      "name": "join",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "zAPStudy Specific/marketing.js",
+      "name": "marketing",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "zAPStudy Specific/noad.js",
+      "name": "noad",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "zAPStudy Specific/noreply.js",
+      "name": "noreply",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "noreply",
+        "unimportantcustomid2"
+      ]
+    },
+    {
+      "file": "zAPStudy Specific/noreply.js",
+      "name": "register-noreply-slash",
+      "type": "ready",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "zAPStudy Specific/scam.js",
+      "name": "scam",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "zAPStudy Specific/slash-contributor.js",
+      "name": "contributor",
+      "type": "interaction",
+      "prototype": "slash",
+      "aliases": null,
+      "customIds": [
+        "contributor",
+        "unimportantcustomid2",
+        "ainfo"
+      ]
+    },
+    {
+      "file": "zAPStudy Specific/slash-contributor.js",
+      "name": "ainfo",
+      "type": "interaction",
+      "prototype": "button",
+      "aliases": null,
+      "customIds": [
+        "ainfo",
+        "ainfomodal"
+      ]
+    },
+    {
+      "file": "zAPStudy Specific/slash-contributor.js",
+      "name": "ainfomodal",
+      "type": "interaction",
+      "prototype": "modal",
+      "aliases": null,
+      "customIds": [
+        "ainfomodal"
+      ]
+    },
+    {
+      "file": "zVolunteer Tracking/addhours.js",
+      "name": "addhours",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "hoursadd"
+      ]
+    },
+    {
+      "file": "zVolunteer Tracking/cite.js",
+      "name": "cite",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    },
+    {
+      "file": "zVolunteer Tracking/hours.js",
+      "name": "hours",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "me"
+      ]
+    },
+    {
+      "file": "zVolunteer Tracking/leaderboard.js",
+      "name": "rich",
+      "type": "command",
+      "prototype": null,
+      "aliases": [
+        "leaderboard",
+        "lb"
+      ]
+    },
+    {
+      "file": "zVolunteer Tracking/pvsa.js",
+      "name": "pvsa",
+      "type": "command",
+      "prototype": null,
+      "aliases": null
+    }
+  ]
+}

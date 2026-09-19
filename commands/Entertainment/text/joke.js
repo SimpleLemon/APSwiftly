@@ -1,28 +1,35 @@
-module.exports = [{
+"use strict";
+
+const { httpJson } = require("../../../src/utils/http");
+
+function onepart(joke) {
+  return String(joke ?? "");
+}
+
+function twopart(joke) {
+  return `Setup: ${String(joke.setup ?? "")}\nDelivery: ${String(joke.delivery ?? "")}`;
+}
+
+module.exports = {
   name: "joke",
+  aliases: ["jokes"],
   info: {
     description: "Returns random jokes.",
-    perms: ["`SendMessages`"]
-},
-  aliases: "jokes",
-  code: `$ifAwaited[$getObjectProperty[api;joke]==;{execute:twopart};{execute:onepart}]
-  $createObject[api;$nonEscape[$get[jsonresponse]]]
-$onlyIf[$isValidObject[$nonEscape[$get[jsonresponse]]]==true;Unable to fetch data for jokes. Please, try again later.]
-$let[jsonresponse;$httpRequest[https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&safe-mode;GET;;;dead]]
-$cooldown[3s; Slow down! Don't spam the command!
-Time remaining: <t:$truncate[$divide[$sum[$getCooldownTime[3s;user;joke;$authorID];$dateStamp];1000]]:R>]`
-},{
-name: "twopart",
-type: "awaited",
-code: `
-Setup: $getObjectProperty[api;setup]
-Delivery: $getObjectProperty[api;delivery]
-`
-},
-{
-name: "onepart",
-type: "awaited",
-code: `
-$getObjectProperty[api;joke]
-`
-}]
+    perms: ["`SendMessages`"],
+  },
+  cooldown: {
+    time: 3000,
+    message: "Slow down! Don't spam the command!\nTime remaining: %timestamp%",
+  },
+  async execute(ctx) {
+    const data = await httpJson(
+      "https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&safe-mode"
+    );
+    if (!data || typeof data !== "object") {
+      return ctx.send("Unable to fetch data for jokes. Please, try again later.");
+    }
+
+    const content = data.joke ? onepart(data.joke) : twopart(data);
+    await ctx.send(content);
+  },
+};

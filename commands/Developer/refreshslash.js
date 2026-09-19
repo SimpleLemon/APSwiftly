@@ -1,19 +1,21 @@
+"use strict";
+
 module.exports = {
-    name: "refreshslash",
-    info: {
-        description: "Updates user apps to the latest change done to them",
-        perms: ["`SendMessages`"],
-        dev: "true"
-    },
-    aliases: "restartslash",
-    code: `
-    $editMessage[$get[messageID];Successfully refreshed user apps!]
-    $awaitExecute[createuserapps]
-    $wait[2s]
-    $setVar[isuserappsalreadysetup;no]
-    $let[messageID;$sendMessage[Refreshing user apps...;true]]
-    $onlyIf[$getVar[isuserappsalreadysetup]==true;User apps must be created already.]
-    $onlyIf[$getVar[userapps]==true;You must have the setup option \`EnableUserApps\` enabled in order to use this.]
-    $onlyIf[$checkContains[$clientOwnerIDs[| ];$authorID]==true;]
-    `
-}
+  name: "refreshslash",
+  aliases: "restartslash",
+  info: {
+    description: "Updates user apps to the latest change done to them",
+    perms: ["`SendMessages`"],
+    dev: "true",
+  },
+  async execute(ctx) {
+    if (!ctx.client.ownerIds.includes(ctx.authorId)) return;
+
+    const message = await ctx.send("Refreshing user apps...");
+    ctx.setVar("isuserappsalreadysetup", "no");
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await ctx.client.services.slash?.syncAll?.();
+    ctx.setVar("isuserappsalreadysetup", "yes");
+    await message.edit("Successfully refreshed user apps!");
+  },
+};

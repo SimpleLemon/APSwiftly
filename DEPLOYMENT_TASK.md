@@ -66,7 +66,7 @@ Use this method when multiple tracked files changed, dependencies changed, or a 
    ```bash
    git add <changed-files>
    git commit -m "Describe the production change"
-   git push origin main
+   git push -u origin <release-branch>
    ```
 
 2. Run the production update script from the Mac without opening an interactive shell:
@@ -76,9 +76,27 @@ Use this method when multiple tracked files changed, dependencies changed, or a 
      "bash /var/www/apswiftly/deploy/update.sh"
    ```
 
-The update script pulls `origin/main`, installs production dependencies, and restarts `apswiftly.service`.
+The update script fast-forwards the current branch from its upstream, installs locked production dependencies, and restarts `apswiftly.service`.
 
 Important: the server worktree must not contain uncommitted changes that conflict with the pull. Inspect and preserve unexpected production changes instead of resetting them.
+
+### SQLite cutover (separate, deliberate step)
+
+The runtime no longer reads aoi.db. Production continues on the legacy aoi.db
+until the migrated SQLite database is deployed on purpose:
+
+```bash
+# On the VPS, with the production aoi.db snapshot as the read-only source:
+node migration/migrate-aoi-to-sqlite.js \
+  --source /var/www/nest.apstudy.org/instance/apswiftly \
+  --dest   /var/www/nest.apstudy.org/instance/apswiftly/apswiftly.sqlite \
+  --report /var/www/apswiftly/migration-report.json
+```
+
+Then set `SQLITE_PATH=/var/www/nest.apstudy.org/instance/apswiftly/apswiftly.sqlite`
+in `/var/www/apswiftly/.env` and restart the service. Do not point the SQLite
+runtime at the legacy aoi.db directory.
+
 
 ## Verify Production
 
@@ -120,7 +138,7 @@ After an APSwiftly-specific runner and workflow are configured, the normal relea
 ```bash
 git add <changed-files>
 git commit -m "Describe the production change"
-git push origin main
+git push -u origin <release-branch>
 ```
 
 The workflow should run `/var/www/apswiftly/deploy/update.sh` and report whether the service restart succeeded. Until that workflow exists, use one of the explicit deployment procedures above.

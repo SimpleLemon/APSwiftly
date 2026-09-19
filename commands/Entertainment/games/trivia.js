@@ -1,52 +1,88 @@
-module.exports = [{
+"use strict";
+
+const { ActionRowBuilder, EmbedBuilder, StringSelectMenuBuilder } = require("discord.js");
+const { Trivia } = require("discord-gamecord");
+
+function toUpper(value) {
+  return String(value ?? "").toLocaleUpperCase();
+}
+
+function settingsRow(authorId) {
+  return new ActionRowBuilder().addComponents(
+    new StringSelectMenuBuilder()
+      .setCustomId(`triviasettings_${authorId}`)
+      .setPlaceholder("Select a option")
+      .setMinValues(1)
+      .setMaxValues(1)
+      .addOptions([
+        {
+          label: "Type",
+          description: "How the game should start?",
+          value: "triviatype",
+        },
+        {
+          label: "Difficulty",
+          description: "How hard the game will be?",
+          value: "triviadifficulty",
+        },
+      ])
+  );
+}
+
+async function startTrivia(ctx) {
+  const game = new Trivia({
+    message: ctx.message,
+    isSlashGame: false,
+    embed: {
+      title: "Trivia",
+      color: ctx.getVar("embedcolor"),
+      description: "You have 60 seconds to guess the answer.",
+    },
+    timeoutTime: 60000,
+    buttonStyle: "SECONDARY",
+    trueButtonStyle: "SUCCESS",
+    falseButtonStyle: "DANGER",
+    mode: ctx.getGlobalUserVar(ctx.authorId, "trivia_type", "main"),
+    difficulty: ctx.getGlobalUserVar(ctx.authorId, "trivia_difficulty", "main"),
+    winMessage: "You won! The correct answer is {answer}.",
+    loseMessage: "You lost! The correct answer is {answer}.",
+    errMessage: "Unable to fetch question data! Please try again.",
+    playerOnlyMessage: "Only {player} can use these buttons.",
+  });
+
+  await game.startGame();
+}
+
+async function showTriviaSettings(ctx) {
+  const embed = new EmbedBuilder()
+    .setTitle("Trivia Settings")
+    .setDescription("Welcome to Trivia settings! To select a option to change, use the dropdown menu below!")
+    .addFields({
+      name: "**Current Setup**",
+      value: [
+        `**Type:** \`${toUpper(ctx.getGlobalUserVar(ctx.authorId, "trivia_type", "main"))}\``,
+        `**Difficulty:** \`${toUpper(ctx.getGlobalUserVar(ctx.authorId, "trivia_difficulty", "main"))}\``,
+      ].join("\n"),
+    })
+    .setColor(ctx.getVar("embedcolor"));
+
+  await ctx.send({ embeds: [embed], components: [settingsRow(ctx.authorId)] });
+}
+
+module.exports = {
   name: "trivia",
-  info: {
-    description: "Starts a random Trivia game (pass the flag \`--settings\` to open up the settings).",
-    perms: ["`SendMessages`"],
-    flags: ["`--settings`"]
-  },
   aliases: "triv",
-  code: `$ifAwaited[$checkContains[$message;--settings;—settings]==true;{execute:triviasettings};{execute:triviastart}]
-
-  $cooldown[4s; Slow down! Don't spam the command!
-Time remaining: <t:$truncate[$divide[$sum[$getCooldownTime[4s;user;trivia;$authorID];$dateStamp];1000]]:R>]`
-},{
-  name: "triviastart",
-  type: "awaited",
-  code: `$djsEval[const { Trivia } = require('discord-gamecord');
-
-const Game = new Trivia({
-  message: message,
-  isSlashGame: false,
-  embed: {
-    title: 'Trivia',
-    color: '$getVar[embedcolor]',
-    description: 'You have 60 seconds to guess the answer.'
+  info: {
+    description: "Starts a random Trivia game (pass the flag `--settings` to open up the settings).",
+    perms: ["`SendMessages`"],
+    flags: ["`--settings`"],
   },
-  timeoutTime: 60000,
-  buttonStyle: 'SECONDARY',
-  trueButtonStyle: 'SUCCESS',
-  falseButtonStyle: 'DANGER',
-  mode: '$getGlobalUserVar[trivia_type]',
-  difficulty: '$getGlobalUserVar[trivia_difficulty]',
-  winMessage: 'You won! The correct answer is {answer}.',
-  loseMessage: 'You lost! The correct answer is {answer}.',
-  errMessage: 'Unable to fetch question data! Please try again.',
-  playerOnlyMessage: 'Only {player} can use these buttons.'
-});
-
-Game.startGame();
-]`
-},{
-  name: "triviasettings",
-  type: "awaited",
-  code: `$title[Trivia Settings]
-$description[Welcome to Trivia settings! To select a option to change, use the dropdown menu below!]
-$addField[**Current Setup**;
-**Type#COLON#** \`$toLocaleUpperCase[$getGlobalUserVar[trivia_type]]\`
-**Difficulty#COLON#** \`$toLocaleUpperCase[$getGlobalUserVar[trivia_difficulty]]\`
-]
-$color[$getVar[embedcolor]]
-$addSelectMenu[1;string;triviasettings_$authorID;Select a option;1;1;false;Type:How the game should start?:triviatype:false;Difficulty:How hard the game will be?:triviadifficulty:false]`
-}]
-
+  cooldown: {
+    time: 4000,
+    message: "Slow down! Don't spam the command!\nTime remaining: %timestamp%",
+  },
+  async execute(ctx) {
+    const settings = ctx.args.some((arg) => arg === "--settings" || arg === "—settings");
+    return settings ? showTriviaSettings(ctx) : startTrivia(ctx);
+  },
+};

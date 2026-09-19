@@ -1,32 +1,36 @@
+"use strict";
+
+const { TwoZeroFourEight } = require("discord-gamecord");
+
 module.exports = {
   name: "2048",
   info: {
     description: "Starts a random game of 2048.",
-    perms: ["`SendMessages`"]
+    perms: ["`SendMessages`"],
   },
-  code: `$djsEval[const { TwoZeroFourEight } = require('discord-gamecord');
+  cooldown: {
+    time: 3000,
+    message: "Slow down! Don't spam the command!\nTime remaining: %timestamp%",
+  },
+  async execute(ctx) {
+    const game = new TwoZeroFourEight({
+      message: ctx.message,
+      isSlashGame: false,
+      embed: {
+        title: "2048",
+        color: ctx.getVar("embedcolor"),
+      },
+      emojis: {
+        up: "⬆️",
+        down: "⬇️",
+        left: "⬅️",
+        right: "➡️",
+      },
+      timeoutTime: 60000,
+      buttonStyle: "SECONDARY",
+      playerOnlyMessage: "Only {player} can use these buttons.",
+    });
 
-const Game = new TwoZeroFourEight({
-  message: message,
-  isSlashGame: false,
-  embed: {
-    title: '2048',
-    color: '$getVar[embedcolor]'
+    await game.startGame();
   },
-  emojis: {
-    up: '⬆️',
-    down: '⬇️',
-    left: '⬅️',
-    right: '➡️',
-  },
-  timeoutTime: 60000,
-  buttonStyle: 'SECONDARY',
-  playerOnlyMessage: 'Only {player} can use these buttons.'
-});
-
-Game.startGame();
-]
-$cooldown[3s; Slow down! Don't spam the command!
-Time remaining: <t:$truncate[$divide[$sum[$getCooldownTime[3s;user;2048;$authorID];$dateStamp];1000]]:R>]
-`
-}
+};

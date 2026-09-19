@@ -1,51 +1,75 @@
-module.exports = [{
-    name: "Ban Logs",
-    type: "banAdd",
-    channel: "$getGuildVar[membereventschannel]",
-    code: `
-    $author[Member banned!;$userAvatar;$userAvatar]
-    $description[
-**$get[accounttype]:** $username <@$authorID>
-**Moderator:** $get[moderatorchecker]
-**Reason:** $get[reason]
-    ]
-    $footer[ID: $authorID]
-    $addTimeStamp
-    $color[Red]
-    $let[moderatorchecker;$advancedReplaceText[$checkCondition[$isBot[$get[staff]]==false&&$getGuildVar[anonymous]==on];true;Unknown;false;$username[$get[staff]] <@$get[staff]>]]
-    $let[reason;$advancedReplaceText[$checkCondition[$getAuditLogs[$guildID;;1;22;{reason}]==null];true;none;false;$getAuditLogs[$guildID;;1;22;{reason}]]]
-    $let[staff;$getAuditLogs[$guildID;;1;22;{executor.id}]]
-    $let[accounttype;$advancedReplaceText[$checkCondition[$isBot==true];true;Bot;false;User]]
-	$onlyIf[$getGuildVar[banneduserslog]==on;]
-    $onlyIf[$hasPerms[$guildID;$clientID;viewauditlog]==true;In order to have ban logs work, i must have \`ViewAuditLog\` permission!]
-    $onlyIf[$hasPermsInChannel[$getGuildVar[membereventschannel];$clientID;viewchannel;sendmessages]==true;]
-    $onlyIf[$guildChannelExists[$guildID;$getGuildVar[membereventschannel]]==true;]
-    $onlyIf[$getGuildVar[membereventschannel]!=none;]
-    $onlyIf[$guildID==$guildID;]
-    `
-    },{
-        name: "Un-Ban Logs",
-        type: "banRemove",
-        channel: "$getGuildVar[membereventschannel]",
-        code: `$author[Member unbanned!;$userAvatar;$userAvatar]
-    $description[
-**$get[accounttype]:** $username <@$authorID>
-**Moderator:** $get[moderator] $if[$getAuditLogs[$guildID;;1;23;{reason}]!=null;
-**Reason:** $getAuditLogs[$guildID;;1;23;{reason}]
-]
-    ]
-    $footer[ID: $authorID]
-    $addTimeStamp
-    $color[DarkGreen]
-    $let[moderator;$username[$get[staff]] <@$get[staff]>]
-    $let[staff;$getAuditLogs[$guildID;;1;23;{executor.id}]]
-    $let[accounttype;$advancedReplaceText[$checkCondition[$isBot==true];true;Bot;false;User]]
-	$onlyIf[$getGuildVar[unbanneduserslog]==on;]
-    $onlyIf[$hasPerms[$guildID;$clientID;viewauditlog]==true;In order to have un-ban logs work, i must have \`ViewAuditLog\` permission!]
-    $onlyIf[$hasPermsInChannel[$getGuildVar[membereventschannel];$clientID;viewchannel;sendmessages]==true;]
-    $onlyIf[$guildChannelExists[$guildID;$getGuildVar[membereventschannel]]==true;]
-    $onlyIf[$getGuildVar[membereventschannel]!=none;]
-    $onlyIf[$guildID==$guildID;]
-    
-    `
-    }]
+"use strict";
+
+const { EmbedBuilder } = require("discord.js");
+const { resolveLogChannel, latestAuditEntry } = require("../../../src/services/logging");
+
+const BAN_TYPES = { banAdd: 22, banRemove: 23 };
+
+module.exports = [
+  {
+    event: "banAdd",
+    async execute(ctx) {
+      const { client, guild, ban } = ctx;
+      if (!guild || !ban?.user) return;
+      if (client.db.getGuildVar(guild.id, "banneduserslog") !== "on") return;
+
+      const channel = await resolveLogChannel(client, guild, "membereventschannel");
+      if (!channel) return;
+      if (!guild.members.me?.permissions.has("ViewAuditLog")) return;
+
+      const entry = await latestAuditEntry(guild, BAN_TYPES.banAdd, { maxAgeMs: 15000 });
+      const staff = entry?.executor?.id;
+      const anonymous = client.db.getGuildVar(guild.id, "anonymous") === "on";
+      const moderator = staff ? (anonymous ? "Unknown" : `${entry.executor.username} <@${staff}>`) : "Unknown";
+      const reason = entry?.reason ?? "none";
+      const accountType = ban.user.bot ? "Bot" : "User";
+
+      const embed = new EmbedBuilder()
+        .setAuthor({
+          name: "Member banned!",
+          iconURL: ban.user.displayAvatarURL({ extension: "png", size: 128 }),
+        })
+        .setDescription(
+          [`**${accountType}:** ${ban.user.username} <@${ban.user.id}>`, `**Moderator:** ${moderator}`, `**Reason:** ${reason}`].join("\n")
+        )
+        .setFooter({ text: `ID: ${ban.user.id}` })
+        .setTimestamp()
+        .setColor("Red");
+
+      await channel.send({ embeds: [embed] });
+    },
+  },
+  {
+    event: "banRemove",
+    async execute(ctx) {
+      const { client, guild, ban } = ctx;
+      if (!guild || !ban?.user) return;
+      if (client.db.getGuildVar(guild.id, "unbanneduserslog") !== "on") return;
+
+      const channel = await resolveLogChannel(client, guild, "membereventschannel");
+      if (!channel) return;
+      if (!guild.members.me?.permissions.has("ViewAuditLog")) return;
+
+      const entry = await latestAuditEntry(guild, BAN_TYPES.banRemove, { maxAgeMs: 15000 });
+      const staff = entry?.executor?.id;
+      const moderator = staff ? `${entry.executor.username} <@${staff}>` : "Unknown";
+      const reason = entry?.reason ?? null;
+      const accountType = ban.user.bot ? "Bot" : "User";
+
+      const lines = [`**${accountType}:** ${ban.user.username} <@${ban.user.id}>`, `**Moderator:** ${moderator}`];
+      if (reason !== null) lines.push(`**Reason:** ${reason}`);
+
+      const embed = new EmbedBuilder()
+        .setAuthor({
+          name: "Member unbanned!",
+          iconURL: ban.user.displayAvatarURL({ extension: "png", size: 128 }),
+        })
+        .setDescription(lines.join("\n"))
+        .setFooter({ text: `ID: ${ban.user.id}` })
+        .setTimestamp()
+        .setColor("DarkGreen");
+
+      await channel.send({ embeds: [embed] });
+    },
+  },
+];
