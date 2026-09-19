@@ -105,8 +105,18 @@ test('actual leveling handler advances level even with announcements disabled',a
 test('managed guild sync sends an empty list to remove obsolete registrations',async t=>{
  const {c}=fixture(t);const calls=[];
  c.sqlite.prepare("INSERT INTO meta(k,v) VALUES ('slash_managed_guilds',?)").run(JSON.stringify(['formerly-managed']));
- c.rest={get:async()=>({id:'application'}),put:async(route,{body})=>{calls.push({route,body});}};
+ c.rest={get:async route=>route.includes('applications/@me')?{id:'application'}:[],put:async(route,{body})=>{calls.push({route,body});}};
  await c.services.slash.syncAll();
  const old=calls.find(call=>call.route.includes('formerly-managed'));
  assert.deepEqual(old.body,[]);
+});
+
+test('global sync preserves Activity entry points and removes obsolete slash commands',async t=>{
+ const {c}=fixture(t);let payload;
+ const entry={id:'entry',type:4,name:'Launch',description:'Launch the activity',handler:2,contexts:[0,1,2],integration_types:[0],version:'server-only'};
+ c.rest={get:async()=>[entry,{id:'old',type:1,name:'obsolete'}],put:async(_route,{body})=>{payload=body;}};
+ await c.services.slash.syncGlobal();
+ assert.deepEqual(payload.find(command=>command.type===4),{id:'entry',type:4,name:'Launch',description:'Launch the activity',handler:2,contexts:[0,1,2],integration_types:[0]});
+ assert.equal(payload.some(command=>command.name==='obsolete'),false);
+ assert.ok(payload.some(command=>command.name==='help'));
 });

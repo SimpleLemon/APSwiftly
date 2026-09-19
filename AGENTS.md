@@ -315,7 +315,7 @@ Secrets live in `.env` (preferred) or `config.json` (gitignored). Env takes prec
 - `src/services/slashRegistry.js` (`SlashService`) validates option payloads and handler coverage before syncing global + managed guild definitions.
 - Ready handler compares a hash of definitions and scopes stored in `meta.slash_definition_hash`; changed definitions sync all managed scopes. The legacy one-time setup flag no longer suppresses changes.
 - Public commands support guild and personal installation. `/help` is server-only. `/addhours` and `/noreply` are scoped to guild `859910344393883710`; `/addhours` authorization is Administrator OR staff role, enforced at runtime. Guild registration payloads omit global-only installation/context fields.
-- Global sync removes obsolete global registrations, including the former global `/addhours`. Live sync is part of bot startup when definitions change; tests and validation never perform it.
+- Global sync removes obsolete global registrations, including the former global `/addhours`, while preserving Discord Activity entry-point commands (type 4) to avoid API error 50240. Live sync is part of bot startup when definitions change; tests and validation never perform it.
 - `refreshslash` / `acreate` (owner) call `client.services.slash.syncAll()`.
 - `migration/register-slash.js` registers from the CLI but requires `APSWIFTLY_ALLOW_REGISTRATION=1` (it writes to the live Discord application).
 

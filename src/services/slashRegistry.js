@@ -75,7 +75,15 @@ class SlashService {
   async syncGlobal() {
     this.validate();
     const definitions = this.globalDefinitions();
-    await this.client.rest.put(Routes.applicationCommands(await this.applicationId()), { body: definitions });
+    const route = Routes.applicationCommands(await this.applicationId());
+    const existing = await this.client.rest.get(route);
+    // Discord requires an existing Activity entry point in bulk updates (50240).
+    // Preserve its configuration while still removing obsolete bot commands.
+    const fields = ["id", "type", "name", "name_localizations", "description", "description_localizations",
+      "handler", "default_member_permissions", "integration_types", "contexts", "nsfw"];
+    const entryPoints = existing.filter(command => command.type === 4).map(command =>
+      Object.fromEntries(fields.filter(key => command[key] !== undefined).map(key => [key, command[key]])));
+    await this.client.rest.put(route, { body: [...definitions, ...entryPoints] });
     return definitions.length;
   }
 
