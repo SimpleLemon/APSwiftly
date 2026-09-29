@@ -41,7 +41,7 @@ module.exports = {
     const user = ctx.options.getUser("user");
     const hours = ctx.options.getInteger("hours");
 
-    await ctx.defer({ flags: 64 });
+    await ctx.defer();
 
     const newTotal = await addHours(ctx.client, {
       targetUserId: user.id,

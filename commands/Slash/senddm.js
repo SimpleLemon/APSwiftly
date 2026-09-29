@@ -25,7 +25,7 @@ module.exports = {
     const user = ctx.options.getUser("user");
     const message = ctx.options.getString("message");
 
-    await ctx.defer({ flags: 64 });
+    await ctx.defer();
 
     const dmEmbed = new EmbedBuilder()
       .setTitle(`Message from ${ctx.author.username}`)

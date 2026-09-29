@@ -34,7 +34,7 @@ function canUseCommand(client, ctx, def) {
 function category(def) {
   const source = def.source || "";
   if (def.ownerOnly || ["reload","terminal"].includes(def.slash?.name)) return "dev";
-  if (/zVolunteer/.test(source) || def.slash?.name === "addhours") return "volunteer";
+  if (/zVolunteer/.test(source) || ["hours", "addhours"].includes(def.slash?.name)) return "volunteer";
   if (/zAPStudy/.test(source) || def.slash?.name === "denied") return "apstudy";
   if (/Entertainment/.test(source) || ["8ball","echo","owoify","reverse"].includes(def.slash?.name)) return "entertainment";
   if (/Moderation/.test(source)) return "moderation";

@@ -65,6 +65,13 @@ const SLASH_DEFINITIONS = {
     contexts: GUILD_ALL,
     options: [{ type: 3, name: "latex", description: "LaTeX message to send", required: true }],
   },
+  hours: {
+    guildId: "859910344393883710",
+    description: "View your or another user's volunteer hours.",
+    integration_types: [0],
+    contexts: [0],
+    options: [{ type: 6, name: "user", description: "User to look up (defaults to you)", required: false }],
+  },
   addhours: {
     guildId: "859910344393883710",
     description: "Add volunteer hours to user.",

@@ -80,6 +80,8 @@ Commands are JavaScript files under `commands/` that export one or more modules.
 - Slash **options/scope live only in `src/slash/definitions.js`**; slash modules only declare `slash: { name }`.
 - `src/services/commandAccess.js` supplies shared command availability rules for prefix routing, slash routing, help, and commandinfo. Privileged component/modal routes recheck current permission on each interaction.
 - Prefix help and `/help` list actual registry entries and aliases with the guild prefix. `commandinfo /name` supports slash metadata. ComponentContext inherits shared Context helpers and completes a deferred response via editReply.
+- Slash response visibility is chosen by the initial reply/defer. `/hours`, `/addhours`, `/senddm`, `/noreply`, `/latex`, `/terminal`, `/ai`, `/echo`, and `/reload` return public results; retain private permission rejections and the explicit private responses of other slash commands. See `migration/SLASH_VISIBILITY.md` for the legacy audit.
+- `/hours [user]` shares the `=hours`/`=me` handler and reads global-user volunteer hours from `custom`; the optional user defaults to the caller. All members of the volunteer guild can use this public, read-only lookup, listed in the Volunteer help category.
 - Hot reload validates a replacement registry before swapping, rebinds event handlers, and refreshes scheduler handlers. It retains the previous registry on validation failure.
 - Legacy `type: "awaited"` handlers are now plain functions/services called directly.
 - Legacy `type: "timeout"` handlers are scheduler jobs.
@@ -314,7 +316,7 @@ Secrets live in `.env` (preferred) or `config.json` (gitignored). Env takes prec
 - `src/slash/definitions.js` is the single source of truth (names, descriptions, options, `default_member_permissions`, `integration_types`, `contexts`, `guildId`).
 - `src/services/slashRegistry.js` (`SlashService`) validates option payloads and handler coverage before syncing global + managed guild definitions.
 - Ready handler compares a hash of definitions and scopes stored in `meta.slash_definition_hash`; changed definitions sync all managed scopes. The legacy one-time setup flag no longer suppresses changes.
-- Public commands support guild and personal installation. `/help` is server-only. `/addhours` and `/noreply` are scoped to guild `859910344393883710`; `/addhours` authorization is Administrator OR staff role, enforced at runtime. Guild registration payloads omit global-only installation/context fields.
+- Public commands support guild and personal installation. `/help` is server-only. `/hours`, `/addhours`, and `/noreply` are scoped to guild `859910344393883710`; `/hours` is available to all members, while `/addhours` authorization is Administrator OR staff role, enforced at runtime. Guild registration payloads omit global-only installation/context fields.
 - Global sync removes obsolete global registrations, including the former global `/addhours`, while preserving Discord Activity entry-point commands (type 4) to avoid API error 50240. Live sync is part of bot startup when definitions change; tests and validation never perform it.
 - `refreshslash` / `acreate` (owner) call `client.services.slash.syncAll()`.
 - `migration/register-slash.js` registers from the CLI but requires `APSWIFTLY_ALLOW_REGISTRATION=1` (it writes to the live Discord application).
@@ -353,6 +355,7 @@ node migration/migrate-aoi-to-sqlite.js \
 | `test/runtime.test.js` | loader, parity manifest, aliases, prefixes, restrictions, slash defs, services |
 | `test/checkins.test.js` | actual handlers, competing processes, delivery uncertainty, restart recovery, inactivity, opt-outs, stale buttons and archival |
 | `test/repairs.test.js` | settings, log toggles, slash visibility, help coverage, reload, deferred replies, isolated validation and archive destination |
+| `test/slash-visibility.test.js` | every slash command's response visibility, closed-DM outcomes, private access rejections, `/hours` self/user lookups and parity with prefix hours |
 | `test/static-gates.test.js` | no aoi DSL, no aoi requires, all modules load, package deps, gitignore |
 
 ---

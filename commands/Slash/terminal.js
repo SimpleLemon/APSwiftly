@@ -21,7 +21,7 @@ module.exports = {
       return ctx.reply("Please send a terminal command to be executed.", { flags: 64 });
     }
 
-    await ctx.defer({ flags: 64 });
+    await ctx.defer();
     let output;
     try {
       const { stdout, stderr } = await execAsync(command, { cwd: repoRoot, maxBuffer: 10 * 1024 * 1024 });

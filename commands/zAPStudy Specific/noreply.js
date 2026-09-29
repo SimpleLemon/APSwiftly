@@ -45,7 +45,7 @@ module.exports = {
 
     const user = ctx.options.getUser("user");
 
-    await ctx.defer({ flags: 64 });
+    await ctx.defer();
 
     const dmEmbed = new EmbedBuilder()
       .setTitle(`Message from ${ctx.author.username}`)
@@ -66,7 +66,7 @@ module.exports = {
         .setTitle("Success!")
         .setColor("#00FF00")
         .setDescription(`You have sent <@!${user.id}> a DM message`);
-      return ctx.reply({ embeds: [embed] }, { flags: 64 });
+      return ctx.reply({ embeds: [embed] });
     }
 
     const embed = new EmbedBuilder()
