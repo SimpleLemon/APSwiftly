@@ -7,7 +7,7 @@ const path = require("node:path");
 const { spawn } = require("node:child_process");
 const { Collection, PermissionFlagsBits } = require("discord.js");
 const { createBot } = require("../src/client");
-const { CheckinService, DAY, GUILD_ID, CATEGORY_ID } = require("../src/services/checkins");
+const { CheckinService, DAY, GUILD_ID, CATEGORY_ID, STAFF_ROLE_ID } = require("../src/services/checkins");
 const { ComponentContext, handleComponent } = require("../src/routers/interactions");
 const logger = { log(){},warn(){},error(){},debug(){},child(){return this;} };
 function setup(t, filename=":memory:") {
@@ -30,8 +30,8 @@ function setup(t, filename=":memory:") {
   const service=new CheckinService(client,{now:()=>now});client.services.checkins=service;
   const scheduler=client.services.scheduler;scheduler.now=()=>now;
   t.after(()=>{service.stop();scheduler.stop();if(client.sqlite.open)client.sqlite.close();});
-  const interaction=(record,customId,admin=false)=>({
-    customId,user:{id:"u"},guild,channel,message:{id:record.schedule_message_id},member:{permissions:{has:p=>admin && p === PermissionFlagsBits.Administrator}},
+  const interaction=(record,customId,admin=false,manager=false)=>({
+    customId,user:{id:"u"},guild,channel,message:{id:record.schedule_message_id,edit:async payload=>edits.push(payload)},member:{permissions:{has:p=>admin && p === PermissionFlagsBits.Administrator},roles:{cache:new Collection(manager ? [[STAFF_ROLE_ID,{}]] : [])}},
     isButton:()=>true,isAnySelectMenu:()=>false,isModalSubmit:()=>false,
     deferred:false,replied:false,reply:async()=>{},editReply:async()=>{},followUp:async()=>{},
     async deferReply(){this.deferred=true;}
@@ -109,7 +109,7 @@ test("all message types reset clock; unavailable history never creates a timer",
   f.setNow(14*DAY);f.channel.messages.fetch=async()=>{throw new Error("Missing ReadMessageHistory");};
   await f.service.scan();assert.equal(f.sent.length,0);
 });
-test("disable button is admin-only, persists, cancels automatic but not manual timers",async t=>{
+test("disable button accepts admins, persists, cancels automatic but not manual timers",async t=>{
   const file=path.join(temp(t),"state.sqlite"), f=setup(t,file);
   await f.service.scan();const automatic=f.service.active(f.channel.id);
   await handleComponent(f.client,f.interaction(automatic,`autocheckinoff:${automatic.id}`));
@@ -120,6 +120,58 @@ test("disable button is admin-only, persists, cancels automatic but not manual t
   await f.service.setEnabled(f.channel.id,false);assert.equal(f.service.active(f.channel.id).id,manual.id);
   f.client.sqlite.close();const next=setup(t,file);assert.equal(next.service.state(f.channel.id).disabled,1);
   await next.service.setEnabled(f.channel.id,true);assert.equal(next.service.state(f.channel.id).cooldown_at,next.now());
+});
+test("managers can disable and enable from the original message without reviving canceled timers",async t=>{
+  const f=setup(t);
+  await f.service.scan();const automatic=f.service.active(f.channel.id);
+  const click=mode=>handleComponent(f.client,f.interaction(automatic,`autocheckin${mode}:${automatic.id}`,false,true));
+  await click("off");
+  assert.equal(f.service.state(f.channel.id).disabled,1);
+  assert.equal(f.scheduler.listJobsOfType("checkinTimeout").length,0);
+  let buttons=f.edits.at(-1).components[0].toJSON().components;
+  assert.equal(buttons[2].label,"Enable auto check-ins");
+  assert.equal(buttons[2].custom_id,`autocheckinon:${automatic.id}`);
+  assert.equal(buttons[2].disabled,undefined);
+  assert.equal(buttons[0].disabled,true);assert.equal(buttons[1].disabled,true);
+  f.setNow(20*DAY);
+  await handleComponent(f.client,f.interaction(automatic,`autocheckinon:${automatic.id}`));
+  assert.equal(f.service.state(f.channel.id).disabled,1);
+  await click("on");
+  assert.equal(f.service.state(f.channel.id).disabled,0);
+  assert.equal(f.service.state(f.channel.id).cooldown_at,20*DAY);
+  assert.equal(f.service.get(automatic.id).status,"canceled");
+  buttons=f.edits.at(-1).components[0].toJSON().components;
+  assert.equal(buttons[2].label,"Disable auto check-ins");
+  assert.equal(buttons[2].custom_id,`autocheckinoff:${automatic.id}`);
+  assert.equal(buttons[0].disabled,true);assert.equal(buttons[1].disabled,true);
+  f.setNow(23*DAY-1);await f.service.scan();assert.equal(f.service.active(f.channel.id),undefined);
+  f.setNow(23*DAY);await f.service.scan();assert.equal(f.service.active(f.channel.id).origin,"automatic");
+  assert.equal(f.pings().length,0);
+});
+test("auto buttons reject mismatched messages, manual timers, and archived channels",async t=>{
+  const f=setup(t);await f.service.scan();const automatic=f.service.active(f.channel.id);
+  const mismatched=f.interaction(automatic,`autocheckinoff:${automatic.id}`,false,true);
+  mismatched.message.id="other";await handleComponent(f.client,mismatched);
+  assert.equal(f.service.state(f.channel.id).disabled,0);
+  f.channel.parentId="1550896740096548894";
+  await handleComponent(f.client,f.interaction(automatic,`autocheckinoff:${automatic.id}`,false,true));
+  assert.equal(f.service.state(f.channel.id).disabled,0);
+  f.channel.parentId=CATEGORY_ID;await f.service.cancel(automatic.id);
+  const manual=await f.service.create(f.channel,DAY);
+  await handleComponent(f.client,f.interaction(manual,`autocheckinoff:${manual.id}`,false,true));
+  assert.equal(f.service.state(f.channel.id).disabled,0);
+  assert.equal(f.service.active(f.channel.id).id,manual.id);
+});
+test("managers can use prefix auto controls while ordinary members cannot",async t=>{
+  const f=setup(t),command=f.client.registry.prefixCommands.get("checkin");
+  const ctx={services:f.client.services,channel:f.channel,channelId:f.channel.id,
+    member:f.interaction({},"",false,true).member,arg:index=>index === 1 ? "auto" : "off",send:async()=>{}};
+  await command.execute(ctx);assert.equal(f.service.state(f.channel.id).disabled,1);
+  ctx.arg=index=>index === 1 ? "auto" : "on";
+  ctx.member=f.interaction({},"").member;
+  await command.execute(ctx);assert.equal(f.service.state(f.channel.id).disabled,1);
+  ctx.member=f.interaction({},"",false,true).member;
+  await command.execute(ctx);assert.equal(f.service.state(f.channel.id).disabled,0);
 });
 test("archival cancels a pending check-in without sending",async t=>{
   const f=setup(t),row=await f.service.create(f.channel,DAY);f.channel.parentId="1550896740096548894";

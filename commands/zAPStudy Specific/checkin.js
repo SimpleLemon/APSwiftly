@@ -3,12 +3,22 @@ const { PermissionFlagsBits } = require("discord.js");
 const { parseTime } = require("../../src/utils/time");
 const { STAFF_ROLE_ID } = require("../../src/services/checkins");
 const staff = ctx => Boolean(ctx.member?.permissions?.has(PermissionFlagsBits.Administrator) || ctx.member?.roles?.cache?.has(STAFF_ROLE_ID));
-const admin = ctx => Boolean(ctx.member?.permissions?.has(PermissionFlagsBits.Administrator));
 function recordFor(ctx) {
   const service=ctx.services.checkins;
   const id=ctx.customId.split(":")[1];
   const record=id ? service.get(id) : service.active(ctx.channelId);
   return record?.channel_id === ctx.channelId && record.schedule_message_id === ctx.message?.id ? record : null;
+}
+async function setAutomatic(ctx, enabled) {
+  if (!staff(ctx)) return ctx.reply(`You need Administrator or <@&${STAFF_ROLE_ID}> to manage check-ins.`,{flags:64});
+  const service=ctx.services.checkins;
+  const row=recordFor(ctx);
+  if (!row || row.origin !== "automatic" || !service.eligible(ctx.channel)) return ctx.reply("This button does not belong to this channel's automatic check-in.",{flags:64});
+  await ctx.defer({flags:64});
+  await service.setEnabled(ctx.channelId,enabled);
+  const current=service.get(row.id);
+  await ctx.message.edit({components:[service.row(current,current.status !== "pending")]});
+  return ctx.reply(enabled ? "Automatic check-ins enabled; a fresh three-day waiting period starts now." : "Automatic check-ins disabled for this channel. Any unsent automatic timer was canceled.");
 }
 module.exports = [
   { name: "checkin", info: { description: "Schedule a check-in; use status, resolve, or auto on/off.", perms: ["Administrator or APStudy staff"] },
@@ -23,7 +33,6 @@ module.exports = [
       }
       if (action === "resolve") return ctx.send(service.resolve(ctx.channelId) ? "Review recorded; no reminder was resent. Automatic scheduling can resume after three days." : "No uncertain check-in is ready to resolve. In-progress operations require a five-minute waiting period.");
       if (action === "auto") {
-        if (!admin(ctx)) return ctx.send("Administrator permission is required.");
         const mode=ctx.arg(2)?.toLowerCase();
         if (!["on","off"].includes(mode)) return ctx.send("Usage: checkin auto on/off");
         await service.setEnabled(ctx.channelId,mode === "on");
@@ -50,12 +59,6 @@ module.exports = [
     const canceled=await ctx.services.checkins.cancel(row.id,ctx.message.id);
     return ctx.reply(canceled ? "Check-in canceled." : "This check-in was already handled or delivery has started.");
   } },
-  { component: "button", customId: "autocheckinoff", async execute(ctx) {
-    if (!admin(ctx)) return ctx.reply("Administrator permission is required.",{flags:64});
-    const row=recordFor(ctx);
-    if (!row || row.origin !== "automatic") return ctx.reply("This button does not belong to this channel's automatic check-in.",{flags:64});
-    await ctx.defer({flags:64});
-    await ctx.services.checkins.setEnabled(ctx.channelId,false);
-    return ctx.reply("Automatic check-ins disabled for this channel. Any unsent automatic timer was canceled. Use checkin auto on to enable again.");
-  } }
+  { component: "button", customId: "autocheckinoff", execute: ctx=>setAutomatic(ctx,false) },
+  { component: "button", customId: "autocheckinon", execute: ctx=>setAutomatic(ctx,true) }
 ];

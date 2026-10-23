@@ -38,8 +38,12 @@ class CheckinService {
       new ButtonBuilder().setCustomId(`earlycheckin:${record.id}`).setLabel("Early Check-In").setEmoji("🔔").setStyle(ButtonStyle.Primary).setDisabled(finished),
       new ButtonBuilder().setCustomId(`cancelcheckin:${record.id}`).setLabel("Cancel").setStyle(ButtonStyle.Secondary).setDisabled(finished)
     );
-    if (record.origin === "automatic") row.addComponents(new ButtonBuilder()
-      .setCustomId(`autocheckinoff:${record.id}`).setLabel("Disable auto check-ins").setStyle(ButtonStyle.Secondary));
+    if (record.origin === "automatic") {
+      const disabled = Boolean(this.state(record.channel_id).disabled);
+      row.addComponents(new ButtonBuilder()
+        .setCustomId(`${disabled ? "autocheckinon" : "autocheckinoff"}:${record.id}`)
+        .setLabel(`${disabled ? "Enable" : "Disable"} auto check-ins`).setStyle(ButtonStyle.Secondary));
+    }
     return row;
   }
   async edit(record, title, description = "") {
