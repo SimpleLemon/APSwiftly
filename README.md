@@ -1,21 +1,30 @@
-# APSwiftly
+<p align="center">
+  <img src="https://resources.apstudy.org/images/AP-Resources-Logo.png" width="128" height="128" alt="APStudy Logo">
+</p>
 
-Built for [APStudy](https://apstudy.org), a free AP resource and productivity organization, and also used in Heimler’s Discord server.
+<h1 align="center">APSwiftly</h1>
+
+<p align="center">
+  Discord bot built for APStudy's Contributor program and server moderation.
+</p>
 
 ---
 
-In a server where APSwiftly is installed (i.e., APStudy or Heimler's Discord Server), run `=help` to see all the commands within the dropdown sections.
+# Overview
+Built using Discord.js running on NodeJS, this bot is used primarily for the APStudy [Discord server](https://apstudy.org/discord), a Discord community for the APStudy organization, which provides free AP resource and a productivity platform for high school and college students.
+Fun fact: this bot is also in Heimler History’s Discord server!
 
-APStudy’s volunteer and contributor features are only allowed to be used in the APStudy server and by those with permissions (i.e., Contributor/Branch Director roles).
+---
 
-## Features
+# Features
+> Run `=help` to see all the commands within their respective sections (accessed via dropdowns). Please note that APStudy’s volunteer and contributor features are only allowed to be used in the APStudy server and by those with permissions (i.e., Contributor/Branch Director roles).
 
-- Look up your own or another volunteer’s hours with `/hours`. Branch managers can add hours, with changes recorded in a log channel.
-- Create contributor channels, send onboarding and follow-up messages, and archive completed channels.
-- Set contributor reminders with send-early and cancel buttons (very important).
-- Moderate members, configure welcome and leave messages, and logging.
-- Render LaTeX math equations as image attachments, chat through APStudy’s AI integration, and set personal DM reminders (still iffy).
-- Manage settings through Discord menus, with help that contains only the commands each member can actually use.
+- Look up your own or another volunteer’s hours with `/hours`. APStudy Branch managers can add hours, with changes recorded in a log channel.
+- Create contributor channels, send onboarding and follow-up messages, and archive old contributor channels.
+- Set contributor reminders (=checkin #d) with send early and cancel options (this is a very important feature for the managers).
+- Moderate members, send welcome and leave messages, and message & role logging.
+- Render LaTeX math equations as image attachments (/latex), chat through APStudy’s AI integration (/ai), and set personal DM reminders (still iffy).
+- The settings menu only contains the commands you can actually use (i.e., admins can see more).
 
 
 ## Credits
@@ -23,4 +32,4 @@ APStudy’s volunteer and contributor features are only allowed to be used in th
 Maintained for [APStudy](https://apstudy.org) by [Derek Chen / SimpleLemon](https://github.com/SimpleLemon).
 Thanks to the maintainers of [discord.js](https://discord.js.org/), [better-sqlite3](https://github.com/WiseLibs/better-sqlite3), [sharp](https://sharp.pixelplumbing.com/), and [discord-gamecord](https://github.com/DevSnowflake/discord-gamecord)!
 
-This README now has 0% AI writing.
+This README now has 0% AI writing. It still doesn't. Yes, I'm 19 years old and I write with "i.e.,".
