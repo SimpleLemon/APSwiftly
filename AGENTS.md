@@ -28,8 +28,9 @@ APSwiftly is the official Discord bot for [APStudy](https://apstudy.org) — a f
 | Bot framework | [discord.js](https://discord.js.org/) v14.20.0 (`Client` in `src/client.js`) |
 | Database | SQLite via `better-sqlite3` (`src/db/`) |
 | Config | `.env` + optional `config.json` (gitignored) |
-| HTTP | `axios` (LaTeX SVG fetch, AI API, image APIs) |
-| Image processing | `sharp` (LaTeX → PNG for `renderMath`) |
+| HTTP | `axios` (AI API, image APIs) |
+| Math rendering | `mathjax-full` (bundled TeX → SVG, no external API) |
+| Image processing | `sharp` (local LaTeX SVG → PNG for `renderMath`) |
 | Games | `discord-gamecord` (embedded mini-games) |
 | Console styling | `chalk` (dev dependency, startup logs) |
 
@@ -204,7 +205,7 @@ Bot owner IDs come from `BOT_OWNER_IDS` (comma-separated env) — previously con
 | Integration | Endpoint / ID | Used by |
 |-------------|---------------|---------|
 | AI chat API | `https://api.apstudy.org/ai/discord?message=…` | `/ai` |
-| LaTeX rendering | `https://math.now.sh` via `src/services/renderMath.js` | `/latex` |
+| LaTeX rendering | Local MathJax → sharp PNG via `src/services/renderMath.js`; no external endpoint | `/latex` |
 | Contributor role ping | `1258652618482389014` | `checkin` |
 | Contributor category | `1356279309169328158` | `checkin`, `grammar`, contributor channel creation |
 | Contributor view/staff role | `1519016533005832332` | contributor channels, `checkin`, `grammar`, `addhours`, `noreply` |
@@ -356,6 +357,7 @@ node migration/migrate-aoi-to-sqlite.js \
 | `test/checkins.test.js` | actual handlers, competing processes, delivery uncertainty, restart recovery, inactivity, opt-outs, stale buttons and archival |
 | `test/repairs.test.js` | settings, log toggles, slash visibility, help coverage, reload, deferred replies, isolated validation and archive destination |
 | `test/slash-visibility.test.js` | every slash command's response visibility, closed-DM outcomes, private access rejections, `/hours` self/user lookups and parity with prefix hours |
+| `test/render-math.test.js` | offline PNG rendering, delimiters, invalid/oversized input, macro isolation, attachments, trash deletion and slash error responses |
 | `test/static-gates.test.js` | no aoi DSL, no aoi requires, all modules load, package deps, gitignore |
 
 ---
@@ -402,6 +404,7 @@ journalctl -u apswiftly --no-pager -n 50
 
 ## Current Environment Notes
 
+- `/latex` renders locally with bundled MathJax fonts; the former `math.now.sh` endpoint returned Vercel challenge/429 responses. Rendering limits input to 4,000 characters, macro expansion and output dimensions, isolates macros per request, and reports invalid TeX without sending an image. Standard outer math delimiters are accepted; multiline equations retain their natural height.
 - Local workspace path may differ from production host.
 - `config.json`, `.env`, `database/`, and `.migration/` are not in the repo — agents must not create or commit real tokens or production data.
 - Guild/category/role IDs for APStudy features are hardcoded in command files — verify they still match the live Discord server before changing behavior.

@@ -26,6 +26,7 @@
     "discord-gamecord": "^4.4.2",
     "discord.js": "14.20.0",
     "dotenv": "^16.4.7",
+    "mathjax-full": "3.2.2",
     "sharp": "^0.33.2"
   },
   "devDependencies": {
